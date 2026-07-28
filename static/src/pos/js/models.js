@@ -101,9 +101,16 @@ patch(PosOrder.prototype, {
         json.headerData.partner = this.get_partner() || false;
         json.headerData.ticofac_receipt_enabled = this.config.ticofac_receipt_enabled;
         json.headerData.ticofac_receipt_show_customer = this.config.ticofac_receipt_show_customer;
+        json.headerData.order_date = json.date;
+        json.headerData.terminal = this.config.name;
+        json.headerData.economic_activity =
+            this.company.activity_id?.code || this.company.activity_id?.name || false;
+        json.fiscal_sale_condition = "Contado";
+        json.currency_name = this.currency?.name || "CRC";
         json.fiscal_document_version = "4.4";
         json.fiscal_qr_code =
             this.config.ticofac_receipt_enabled &&
+            this.config.ticofac_receipt_show_qr &&
             numberElectronic
                 ? `/ticofac/pos/qr/${encodeURIComponent(numberElectronic)}`
                 : false;

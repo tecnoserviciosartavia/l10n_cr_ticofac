@@ -16,8 +16,11 @@
                         <strong>Identificación:</strong>
                         <t t-esc="props.data.company.vat"/>
                     </div>
+                    <div t-if="props.data.company.street or props.data.company.city">
+                        <strong>Dirección:</strong> <t t-esc="props.data.company.street or props.data.company.city"/>
+                    </div>
                     <div t-if="props.data.company.phone">
-                        <strong>Tel:</strong> <t t-esc="props.data.company.phone"/>
+                        <strong>Teléfono:</strong> <t t-esc="props.data.company.phone"/>
                     </div>
                     <div t-if="props.data.company.email" t-esc="props.data.company.email"/>
                     <div t-if="props.data.company.website" t-esc="props.data.company.website"/>
@@ -28,27 +31,24 @@
                 </div>
 
                 <div t-if="props.data.number_electronic"
-                     class="my-2 p-2"
-                     style="border:1px solid #000; border-radius:4px;">
+                     class="my-2 py-2"
+                     style="border-top:1px dashed #000; border-bottom:1px dashed #000;">
                     <div class="text-center fw-bolder" style="font-size:15px;">
                         <t t-if="props.data.tipo_documento === 'FE'">FACTURA ELECTRÓNICA</t>
                         <t t-elif="props.data.tipo_documento === 'NC'">NOTA DE CRÉDITO ELECTRÓNICA</t>
                         <t t-else="">TIQUETE ELECTRÓNICO</t>
                     </div>
-                    <div class="text-center">Versión 4.4</div>
+                    <div class="d-flex mt-1"><strong>Documento:</strong><span class="ms-auto" style="font-family:monospace;" t-esc="props.data.sequence"/></div>
+                    <div class="d-flex"><strong>Fecha:</strong><span class="ms-auto" t-esc="props.data.order_date"/></div>
+                    <div t-if="props.data.economic_activity" class="d-flex"><strong>Act. económica:</strong><span class="ms-auto" t-esc="props.data.economic_activity"/></div>
                     <div class="mt-1"><strong>Clave:</strong></div>
-                    <div style="font-family:monospace; font-size:10px; overflow-wrap:anywhere; word-break:break-all;"
-                         t-esc="props.data.number_electronic"/>
-                    <div class="mt-1">
-                        <strong>Consecutivo:</strong>
-                        <span style="font-family:monospace;" t-esc="props.data.sequence"/>
-                    </div>
+                    <div class="text-center" style="font-family:monospace; font-size:10px; overflow-wrap:anywhere; word-break:break-all;" t-esc="props.data.number_electronic"/>
                 </div>
 
                 <div t-if="props.data.ticofac_receipt_show_customer and props.data.partner"
                      class="my-2 p-2"
                      style="border-top:1px dashed #000; border-bottom:1px dashed #000;">
-                    <div class="fw-bolder">RECEPTOR</div>
+                    <div class="fw-bolder">CLIENTE</div>
                     <div><strong>Nombre:</strong> <t t-esc="props.data.partner.name"/></div>
                     <div t-if="props.data.partner.vat">
                         <strong>Identificación:</strong> <t t-esc="props.data.partner.vat"/>
@@ -59,6 +59,7 @@
                 </div>
 
                 <div class="text-center mt-2">
+                    <div t-if="props.data.terminal"><strong>Terminal:</strong> <t t-esc="props.data.terminal"/></div>
                     <div t-if="props.data.cashier">
                         <strong>Atendido por:</strong> <t t-esc="props.data.cashier"/>
                     </div>
@@ -88,22 +89,29 @@
     <t t-name="l10n_cr_ticofac.FiscalOrderReceipt"
        t-inherit="point_of_sale.OrderReceipt"
        t-inherit-mode="extension">
+        <xpath expr="//OrderWidget" position="before">
+            <div t-if="props.data.headerData.ticofac_receipt_enabled" class="my-2 py-2" style="border-top:1px dashed #000; border-bottom:1px dashed #000; font-size:11px;">
+                <div class="d-flex"><strong>Condición de venta:</strong><span class="ms-auto" t-esc="props.data.fiscal_sale_condition"/></div>
+                <div class="d-flex" t-if="props.data.paymentlines and props.data.paymentlines.length"><strong>Medio de pago:</strong><span class="ms-auto" t-esc="props.data.paymentlines[0].name"/></div>
+                <div class="d-flex"><strong>Moneda:</strong><span class="ms-auto" t-esc="props.data.currency_name"/></div>
+            </div>
+            <div t-if="props.data.headerData.ticofac_receipt_enabled" class="d-flex fw-bolder py-1" style="border-bottom:1px dashed #000; font-size:11px;">
+                <span>Cant. / Producto</span><span class="ms-auto">Total</span>
+            </div>
+        </xpath>
         <xpath expr="//div[hasclass('after-footer')]" position="before">
-            <div t-if="props.data.fiscal_qr_code" class="mt-3">
-                <div class="d-flex justify-content-end">
-                    <div class="text-center" style="width:2.8cm;">
-                        <img t-att-src="props.data.fiscal_qr_code"
-                             alt="QR de la clave electrónica"
-                             style="width:2.8cm; height:2.8cm; image-rendering:pixelated;"/>
-                        <div style="font-size:9px; line-height:1.1;">Consulta del comprobante electrónico</div>
-                    </div>
+            <div t-if="props.data.fiscal_qr_code" class="mt-3 text-center">
+                <div style="border-top:1px dashed #000; padding-top:10px;">
+                    <img t-att-src="props.data.fiscal_qr_code" alt="QR de la clave electrónica" style="width:3.6cm; height:3.6cm; image-rendering:pixelated;"/>
+                    <div style="font-size:9px; line-height:1.1;">Escanee para consultar la clave electrónica</div>
                 </div>
             </div>
             <div t-if="props.data.headerData.ticofac_receipt_enabled"
                  class="text-center mt-2"
                  style="font-size:9px; line-height:1.2;">
-                Autorizada mediante resolución N.° MH-DGT-RES-0027-2024<br/>
-                del 13 de noviembre de 2024. Versión 4.4<br/>
+                Documento emitido conforme a la resolución<br/>
+                N.° MH-DGT-RES-0027-2024 del 13 de noviembre de 2024.<br/>
+                <strong>Versión 4.4</strong><br/>
                 Conserve este documento y los archivos XML asociados.
             </div>
         </xpath>
