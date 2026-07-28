@@ -23,11 +23,3 @@ class PosConfig(models.Model):
         string="Mostrar información del cliente",
         default=True,
     )
-
-    def _load_pos_data_fields(self, config_id):
-        return super()._load_pos_data_fields(config_id) + [
-            "default_partner_id",
-            "ticofac_receipt_enabled",
-            "ticofac_receipt_show_qr",
-            "ticofac_receipt_show_customer",
-        ]
