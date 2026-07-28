@@ -63,10 +63,10 @@
 
                 <div class="text-center mt-2">
                     <div t-if="props.data.terminal"><strong>Terminal:</strong> <t t-esc="props.data.terminal"/></div>
-                    <div t-if="props.data.cashier">
+                    <div t-if="props.data.is_restaurant and props.data.cashier">
                         <strong>Atendido por:</strong> <t t-esc="props.data.cashier"/>
                     </div>
-                    <div t-if="props.data.trackingNumber and !props.data.bigTrackingNumber"
+                    <div t-if="props.data.is_restaurant and props.data.trackingNumber and !props.data.bigTrackingNumber"
                          class="fw-bolder"
                          style="font-size:20px;">
                         Orden # <t t-esc="props.data.trackingNumber"/>
