@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_invoice_document" inherit_id="account.report_invoice_document">
+        <!-- Oculta la linea de la factura cuando sea IVA Devuelto-->
+        <xpath expr="//t[@t-foreach='lines']/tr" position="attributes">
+            <attribute name="t-if">line.product_id.name != 'IVA Devuelto'</attribute>
+        </xpath>
+
+        <xpath expr="//div[hasclass('page', 'mb-4')]" position="attributes">
+            <attribute name="class" add="mt-2" separator=" " remove="mb-4"/>
+        </xpath>
+
+        <xpath expr="//div[@id='informations']" position="replace">
+            <div id="electronic_data_number_electronic" class="row m-0">
+                <div class="col-8" t-if="o.number_electronic" name="number_electronic">
+                    <strong>Electronic Number:</strong>
+                    <p class="m-0" t-field="o.number_electronic"/>
+                </div>
+                <div class="col-4" t-if="o.sequence" name="sequence">
+                    <strong>Electronic consecutive:</strong>
+                    <p class="m-0" t-field="o.sequence"/>
+                </div>
+            </div>
+            <div id="informations" class="row mb-4"
+                 t-if="o.invoice_date or (o.invoice_date_due and o.move_type == 'out_invoice' and o.state == 'posted') or o.delivery_date or o.invoice_origin or o.partner_id.ref or o.ref or o.invoice_incoterm_id or o.tipo_documento or o.payment_methods_id or o.invoice_usd_currency_rate">
+                <div class="col" t-if="o.invoice_date" name="invoice_date">
+                    <t t-if="o.move_type == 'out_invoice'"><strong>Invoice Date:</strong></t>
+                    <t t-elif="o.move_type == 'out_refund'"><strong>Credit Note Date:</strong></t>
+                    <t t-elif="o.move_type == 'out_receipt'"><strong>Receipt Date:</strong></t>
+                    <t t-else=""><strong>Date:</strong></t>
+                    <p class="m-0" t-field="o.invoice_date"/>
+                </div>
+                <div class="col" t-if="o.invoice_date_due and o.move_type == 'out_invoice' and o.state == 'posted'" name="due_date">
+                    <strong>Due Date:</strong>
+                    <div t-field="o.invoice_date_due"/>
+                </div>
+                <div class="col" t-if="o.delivery_date" name="delivery_date">
+                    <strong>Delivery Date:</strong>
+                    <div t-field="o.delivery_date"/>
+                </div>
+                <div class="col" t-if="o.invoice_origin" name="origin">
+                    <strong>Source:</strong>
+                    <div t-field="o.invoice_origin"/>
+                </div>
+                <div class="col" t-if="o.partner_id.ref" name="customer_code">
+                    <strong>Customer Code:</strong>
+                    <div t-field="o.partner_id.ref"/>
+                </div>
+                <div class="col" t-if="o.ref" name="reference">
+                    <strong>Reference:</strong>
+                    <div t-field="o.ref"/>
+                </div>
+                <div class="col" t-if="o.tipo_documento" name="tipo_documento">
+                    <strong>Document Type:</strong>
+                    <div t-field="o.tipo_documento"/>
+                </div>
+                <div class="col" t-if="o.invoice_usd_currency_rate" name="invoice_usd_currency_rate">
+                    <strong>Currency Exchange:</strong>
+                    <div t-field="o.invoice_usd_currency_rate" t-options='{"widget": "float", "precision": 2}'/>
+                </div>
+                <div class="col" t-if="o.payment_methods_id" name="payment_methods_id">
+                    <strong>Payment Method:</strong>
+                    <div t-field="o.payment_methods_id"/>
+                </div>
+                <div class="col" t-if="o.invoice_incoterm_id" name="incoterm_id">
+                    <strong>Incoterm:</strong>
+                    <div t-if="o.incoterm_location">
+                        <span t-field="o.invoice_incoterm_id.code"/> <br/>
+                        <span t-field="o.incoterm_location"/>
+                    </div>
+                    <div t-else="" t-field="o.invoice_incoterm_id.code" class="m-0"/>
+                </div>
+            </div>
+        </xpath>
+
+        <xpath expr="//t[@t-call='account.document_tax_totals']" position="replace">
+            <t t-if="o.tax_totals">
+                <t t-set="tax_totals" t-value="o.tax_totals"/>
+                <t t-set="currency" t-value="o.currency_id"/>
+                <t t-set="same_tax_base" t-value="tax_totals['same_tax_base']"/>
+
+                <!-- SUBTOTAL SIN DESCUENTO (calculado) -->
+                <tr class="o_subtotal">
+                    <td>
+                        <span>Subtotal</span>
+                    </td>
+                    <td class="text-end">
+                        <t t-set="subtotal_before_discount"
+                           t-value="o.amount_untaxed + (o.amount_discount_electronic_invoice or 0.0)"/>
+                        <span t-out="subtotal_before_discount"
+                              t-options='{"widget": "monetary", "display_currency": currency}'/>
+                    </td>
+                </tr>
+
+                <!-- DESCUENTO -->
+                <t t-if="o.amount_discount_electronic_invoice">
+                    <tr class="o_subtotal">
+                        <td name="td_amount_discount_electronic_invoice_label">Discount Amount</td>
+                        <td class="text-end" name="td_amount_discount_electronic_invoice">
+                            <span t-field="o.amount_discount_electronic_invoice"
+                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                        </td>
+                    </tr>
+                </t>
+
+                <!-- IVA DEVUELTO -->
+                <t t-if="o.amount_iva_returned">
+                    <tr class="o_subtotal">
+                        <td name="td_amount_iva_returned_label">IVA Returned</td>
+                        <td class="text-end" name="td_amount_iva_returned">
+                            <span t-field="o.amount_iva_returned"
+                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                        </td>
+                    </tr>
+                </t>
+
+                <!-- IMPUESTOS DE ODOO -->
+                <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
+                    <t t-foreach="subtotal['tax_groups']" t-as="tax_group">
+                        <tr class="o_taxes">
+                            <t t-if="same_tax_base or tax_group['display_base_amount_currency'] is None">
+                                <td style="max-width: 200px;">
+                                    <span t-out="tax_group['group_name']">Tax 15%</span>
+                                </td>
+                                <td class="text-end o_price_total">
+                                    <span class="text-nowrap"
+                                          t-out="tax_group['tax_amount_currency']"
+                                          t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                </td>
+                            </t>
+                            <t t-else="">
+                                <td>
+                                    <span t-out="tax_group['group_name']">Tax 15%</span>
+                                    <span> on </span>
+                                    <span class="text-nowrap"
+                                          t-out="tax_group['display_base_amount_currency']"
+                                          t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                </td>
+                                <td class="text-end o_price_total">
+                                    <span class="text-nowrap"
+                                          t-out="tax_group['tax_amount_currency']"
+                                          t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                </td>
+                            </t>
+                        </tr>
+                    </t>
+                </t>
+
+                <!-- ROUNDING (si existe) -->
+                <tr t-if="'cash_rounding_base_amount_currency' in tax_totals">
+                    <td>Rounding</td>
+                    <td class="text-end">
+                        <span t-out="tax_totals['cash_rounding_base_amount_currency']"
+                              t-options='{"widget": "monetary", "display_currency": currency}'/>
+                    </td>
+                </tr>
+
+                <!-- TOTAL -->
+                <tr class="o_total">
+                    <td><strong>Total</strong></td>
+                    <td class="text-end">
+                        <strong t-out="tax_totals['total_amount_currency']"
+                                t-options='{"widget": "monetary", "display_currency": currency}'/>
+                    </td>
+                </tr>
+            </t>
+        </xpath>
+
+        <xpath expr="//div[@id='qrcode']" position="after">
+            <p>
+                <span>Autorizada mediante resolución N° MH-DGT-RES-0027-2024 del 13 de noviembre de 2024. <br/>Versión 4.4</span>
+            </p>
+
+            <div style="width:700px; height:110px;">
+                <div style="width:100px;height:100px;float:left;">
+                    <span t-field="o.qr_image" t-options='{"widget": "image"}' />
+                </div>
+            </div>
+
+            <div id="exoneration" t-if="o.partner_id.has_exoneration">
+                <table class="table table-sm o_main_table" name="invoice_line_table">
+                    <thead>
+                        <tr>
+                            <th>Exoneration Number</th>
+                            <th>Authorization Type</th>
+                            <th>Exoneration Issuer</th>
+                            <th>Issue Date</th>
+                            <th>Expiration Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span t-field="o.partner_id.exoneration_number"/>
+                            </td>
+                            <td>
+                                <span t-field="o.partner_id.type_exoneration"/>
+                            </td>
+                            <td>
+                                <span t-field="o.partner_id.institution_name"/>
+                            </td>
+                            <td>
+                                <span t-field="o.partner_id.date_issue"/>
+                            </td>
+                            <td>
+                                <span t-field="o.partner_id.date_expiration"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </xpath>
+    </template>
+</odoo>

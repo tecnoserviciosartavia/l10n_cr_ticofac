@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_res_partner_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.ticofac</field>
+        <field name="model">res.partner</field>
+        <field name="type">form</field>
+        <field name="priority">99</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="property_payment_term_id" position="after">
+                <field name="payment_methods_id" groups="account.group_account_invoice"/>
+            </field>
+
+            <xpath expr="//field[@id='company']" position="attributes">
+                <attribute name="default_focus"/>
+            </xpath>
+            <xpath expr="//field[@id='individual']" position="attributes">
+                <attribute name="default_focus"/>
+            </xpath>
+
+            <xpath expr="//form/sheet/group/group[1]" position="replace">
+                <group>
+                    <field name="vat" string="Identificación" placeholder="Número de identificación" readonly="parent_id" default_focus="1" widget="char"/>
+                    <field name="identification_id" string="Tipo de identificación"
+                           options="{&quot;no_create&quot;: True, &quot;no_open&quot;: True}"/>
+                    <field name="supplier_rank" invisible="1" readonly="1"/>
+                </group>
+            </xpath>
+
+            <xpath expr="//field[@name='vat'][@default_focus='1']" position="attributes">
+                <attribute name="widget"/>
+            </xpath>
+
+            <xpath expr="//form/sheet/group" position="after">
+                <group string="Dirección" col="2" class="o_ticofac_address_full">
+                    <group string="División territorial">
+                        <field name="country_id" string="País" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}" readonly="type == 'contact' and parent_id"/>
+                        <field name="state_id" string="Provincia" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}" domain="[('country_id', '=', country_id)]" readonly="type == 'contact' and parent_id"/>
+                        <field name="county_id" string="Cantón" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}" domain="[('state_id', '=', state_id)]" invisible="country_id != %(base.cr)d" readonly="type == 'contact' and parent_id"/>
+                        <field name="district_id" string="Distrito" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}" domain="[('county_id', '=', county_id)]" invisible="country_id != %(base.cr)d" readonly="type == 'contact' and parent_id"/>
+                    </group>
+                    <group string="Ubicación y señas">
+                        <field name="neighborhood_id" string="Barrio" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}" domain="[('district_id', '=', district_id)]" invisible="country_id != %(base.cr)d" readonly="type == 'contact' and parent_id"/>
+                        <field name="city" string="Ciudad" readonly="country_id == %(base.cr)d or (type == 'contact' and parent_id)"/>
+                        <field name="zip" string="Código postal" placeholder="Se calcula automáticamente" readonly="country_id == %(base.cr)d or (type == 'contact' and parent_id)"/>
+                        <field name="street" string="Dirección exacta" placeholder="Calle, avenida y otras señas" readonly="type == 'contact' and parent_id"/>
+                        <field name="street2" string="Otras señas" readonly="type == 'contact' and parent_id"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <xpath expr="//page[@name='contact_addresses']" position="attributes">
+                <attribute name="autofocus"/>
+            </xpath>
+
+            <xpath expr="//page[@name='contact_addresses']" position="before">
+                <page name="ticofac_tax_information" string="Información fiscal Costa Rica" autofocus="autofocus">
+                    <group>
+                        <group string="Estado tributario">
+                            <field name="inscribed" string="Inscrito en Hacienda" force_save="1"/>
+                            <field name="has_exoneration" string="¿Posee exoneración?" invisible="supplier_rank &gt; 0"/>
+                            <field name="export" string="Es exportación" invisible="supplier_rank &gt; 0"/>
+                        </group>
+                        <group string="Actividad principal">
+                            <field name="activity_id" string="Actividad económica predeterminada"
+                                   domain="[('id', 'in', economic_activities_ids)]"
+                                   options="{&quot;no_create&quot;: True, &quot;no_open&quot;: True, &quot;active_test&quot;: False}"/>
+                            <button name="action_get_economic_activities" type="object"
+                                    string="Consultar datos en Hacienda" class="btn btn-secondary" icon="fa-refresh"/>
+                        </group>
+                    </group>
+                    <separator string="Actividades económicas registradas"/>
+                    <field name="economic_activities_ids" string="Actividades económicas" readonly="1" nolabel="1"
+                           options="{&quot;no_create&quot;: True, &quot;no_open&quot;: True}">
+                        <list create="false" delete="false">
+                            <field name="code" string="Código"/>
+                            <field name="name" string="Nombre"/>
+                            <field name="sale_type" string="Tipo de venta"/>
+                        </list>
+                    </field>
+                </page>
+
+                <page name="exoneration_config" string="Exoneración" invisible="not has_exoneration">
+                    <group>
+                        <group string="Autorización">
+                            <field name="exoneration_number" string="Número de exoneración"/>
+                            <field name="type_exoneration" string="Tipo de autorización"/>
+                            <field name="institution_name" string="Institución emisora"/>
+                        </group>
+                        <group string="Vigencia">
+                            <field name="percentage_exoneration" string="Porcentaje de exoneración"/>
+                            <field name="date_issue" string="Fecha de emisión"/>
+                            <field name="date_expiration" string="Fecha de vencimiento"/>
+                        </group>
+                    </group>
+                    <separator string="Códigos CABYS autorizados"/>
+                    <field name="allowed_cabys_ids" nolabel="1">
+                        <list create="false" delete="false">
+                            <field name="parent_id" invisible="1"/>
+                            <field name="name" string="Código CABYS"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

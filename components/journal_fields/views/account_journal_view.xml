@@ -1,0 +1,28 @@
+<?xml version = "1.0" encoding="utf-8"?>
+<odoo>
+    <record id="account_view_account_journal_form_inherit" model="ir.ui.view">
+        <field name="name">account.view_account_journal_form_inherit</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.view_account_journal_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='type']" position="after">
+                <field name="chK_invoice_to_hacienda" help="Si esta opción esta activa el sistema no enviará documentos al MH"/>
+            </xpath>
+            <xpath expr="//field[@name='FE_sequence_id']" position="replace">
+                <field name="FE_sequence_id" required="type == 'sale' and not chK_invoice_to_hacienda"/>
+            </xpath>
+            <xpath expr="//field[@name='TE_sequence_id']" position="replace">
+                <field name="TE_sequence_id" required="type == 'sale' and not chK_invoice_to_hacienda"/>
+            </xpath>
+            <xpath expr="//field[@name='FEE_sequence_id']" position="replace">
+                <field name="FEE_sequence_id" required="type == 'sale' and not chK_invoice_to_hacienda"/>
+            </xpath>
+            <xpath expr="//field[@name='NC_sequence_id']" position="replace">
+                <field name="NC_sequence_id" required="type == 'sale' and not chK_invoice_to_hacienda"/>
+            </xpath>
+            <xpath expr="//field[@name='ND_sequence_id']" position="replace">
+                <field name="ND_sequence_id" required="type == 'sale' and not chK_invoice_to_hacienda"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="vendor_bills_view_move_form_inherit" model="ir.ui.view">
+        <field name="name">account.move.form.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="l10n_cr_ticofac.view_move_form_inherit"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='economic_activity_id']" position="after">
+                <field name="iva_condition"
+                       required="move_type in ('in_invoice',)"
+                       invisible="move_type not in ('in_invoice',)"/>
+                <field name="move_type"/>
+            </xpath>
+
+            <xpath expr="//field[@name='economic_activity_id']" position="attributes">
+                <attribute name="required">move_type in ('out_invoice', 'out_refund') or tipo_documento in ('FE', 'FEC')</attribute>
+                <attribute name="invisible">move_type not in ('out_invoice', 'out_refund') and tipo_documento not in ('FE', 'FEC')</attribute>
+                <attribute name="options">{"no_open": true, "no_create": true}</attribute>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

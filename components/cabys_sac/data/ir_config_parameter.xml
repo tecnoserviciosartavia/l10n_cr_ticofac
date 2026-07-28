@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="param_enable_cabys_sac_search" model="ir.config_parameter">
+            <field name="key">l10n_cr_ticofac.enable_cabys_sac_search</field>
+            <field name="value">1</field>
+        </record>
+    </data>
+</odoo>

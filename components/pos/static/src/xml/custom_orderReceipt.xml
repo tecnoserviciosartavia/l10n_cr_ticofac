@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="Electronic_ReceiptHeader" t-inherit="point_of_sale.ReceiptHeader" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('pos-receipt-contact')]" position="replace">
+            <div>
+                <div style="text-align: center;">
+                    <!-- contact address -->
+                    <t t-if="props.data.company.partner_id?.[1]" t-esc="props.data.company.partner_id[1]" />
+                    <t t-if="props.data.company.vat">
+                        <div t-esc="vatText"/>
+                    </t>
+                    <t t-if="props.data.company.phone">
+                        <div>Tel:<t t-esc="props.data.company.phone" /></div>
+                    </t>
+                    <div t-if="props.data.company.email" t-esc="props.data.company.email" />
+                    <div t-if="props.data.company.website" t-esc="props.data.company.website" />
+                    <div t-if="props.data.header" style="white-space:pre-line" t-esc="props.data.header" />
+                </div>
+
+                <!-- Adding the Electronic number just after the company info. -->
+                <div t-if="props.data.tipo_documento">
+                        <span>
+                            <b>Document Type:</b>
+                            <t t-if="props.data.tipo_documento == 'FE' ">
+                                Electronic Invoice
+                            </t>
+                            <t t-elif="props.data.tipo_documento == 'NC' ">
+                                Nota de Crédito
+                            </t>
+                            <t t-else="">
+                                Electronic Ticket
+                            </t>
+                        </span>       
+                </div>
+                <div t-if="props.data.number_electronic">
+                    <b>Key:</b>     
+                        <span t-esc="props.data.number_electronic.substring(0,30)"/><br/>
+                        <span t-esc="props.data.number_electronic.substring(30,50)"/><br/>
+                        
+                    <b>Consecutive:</b>
+                        <span t-esc="props.data.number_electronic.substring(21,41)"/><br/> 
+                </div>
+                <div t-if="props.data.partner">
+                    <b>Customer: </b><t t-esc="props.data.partner.name"/><br/>
+                </div>
+                <div t-if="props.data.partner.email">
+                    <b>Email:</b> <t t-esc="props.data.partner.email"/><br/>
+                </div>
+                <div style="text-align: center;">
+                    <div t-if="props.data.cashier" class="cashier">
+                        <div>--------------------------------</div>
+                        <div><t t-esc="props.data.cashier" /></div>
+                    </div>
+                    <div class="fw-bolder" t-if="props.data.trackingNumber and !props.data.bigTrackingNumber">
+                        <span class="fs-2" >
+                            Orden # <t t-esc="props.data.trackingNumber" />
+                        </span>
+                    </div>
+                </div>
+            </div> 
+        </xpath> 
+    </t>
+    <!-- Making the QR code smaller-->
+<!--    <t t-name="Electronic_OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">-->
+<!--        <xpath expr="//img[hasclass('pos-receipt-qrcode')]" position="replace">-->
+<!--            <img id="posqrcode" t-att-src="props.data.pos_qr_code" class="pos-receipt-qrcode" style="width:100px;height:auto;"/>-->
+<!--        </xpath>-->
+<!--    </t>-->
+</templates>

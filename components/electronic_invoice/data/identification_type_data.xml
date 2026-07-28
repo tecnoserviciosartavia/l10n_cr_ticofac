@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- identification types -->
+    <record id="Identificationtype_01" model="identification.type">
+        <field name="code">01</field>
+        <field name="name">Cédula Física</field>
+        <field name="notes">Se agrega tres ceros antes de iniciar con el número de cédula para completar 12 dígitos</field>
+    </record>
+
+    <record id="Identificationtype_02" model="identification.type">
+        <field name="code">02</field>
+        <field name="name">Cédula Jurídica</field>
+        <field name="notes">Se debe agregar dos ceros antes de iniciar con el número de cédula para completar 12 dígitos</field>
+    </record>
+
+    <record id="Identificationtype_03" model="identification.type">
+        <field name="code">03</field>
+        <field name="name">DIMEX</field>
+        <field name="notes">En aquellos casos donde la cédula se encuentre compuesta de 11 dígitos se debe agregar un cero al inicio para completar 12 dígitos</field>
+    </record>
+
+    <record id="Identificationtype_04" model="identification.type">
+        <field name="code">04</field>
+        <field name="name">NITE</field>
+        <field name="notes">Se debe agregar dos ceros antes de iniciar con el número de identificación para completar 12 dígitos</field>
+    </record>
+
+    <record id="Identificationtype_05" model="identification.type">
+        <field name="code">05</field>
+        <field name="name">Extranjero No Domiciliado</field>
+        <field name="notes">Este tipo de identificación estará disponible en los Datos del Emisor de la Factura Electrónica de Compra únicamente para el registro de las adquisiciones de servicios o bienes intangibles a proveedores no domiciliados en Costa Rica, según el artículo 29 inciso d) y el Transitorio XV del Reglamento del IVA.</field>
+    </record>
+
+    <record id="Identificationtype_06" model="identification.type">
+        <field name="code">06</field>
+        <field name="name">No Contribuyente</field>
+        <field name="notes">Este tipo de identificación estará disponible en los Datos del Emisor de la Factura Electrónica de Compra únicamente para el registro de las adquisiciones de bienes usados vendidos por un no contribuyente para los efectos contables que corresponda. Estará disponible únicamente cuando en el campo “Condición de la Venta” se haya seleccionado el código 13 “Ventas Bienes Usados No Contribuyentes</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+        <!-- Quitar el boton de Cancelar Factura -->
+        <record id="view_payment_methods_list" model="ir.ui.view">
+            <field name="name">payment.methods.list</field>
+            <field name="model">payment.methods</field>
+            <field name="arch" type="xml">
+                <list string="Payment methods">
+                    <field name="sequence"/>
+                    <field name="name"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="account_payment_term_form_inherit" model="ir.ui.view">
+            <field name="name">account.payment.term.form.inherit</field>
+            <field name="model">account.payment.term</field>
+            <field name="inherit_id" ref="account.view_payment_term_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <group>
+                        <separator string="Sale condition" colspan="2"/> 
+                        <field string="Please select the sale condition" 
+                            placeholder="e.g. Contado" 
+                            name="sale_conditions_id"
+                        />
+                        <separator nolabel="1" colspan="2"/>
+                    </group>
+                </xpath>
+          
+            </field>
+        </record>
+
+        <record id="action_payment_methods" model="ir.actions.act_window">
+            <field name="name">Payment methods</field>
+            <field name="res_model">payment.methods</field>
+            <field name="view_mode">list,form</field>
+            <!--<field name="search_view_id" ref="view_account_invoice_filter"/>-->
+        </record>
+    
+    <record id="view_account_payment_form_inherit_cr_fe" model="ir.ui.view">
+        <field name="name">account.payment.form.inherit.cr.fe</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='date']" position="after">
+                <!-- generate_rep: disabled when REP exists and is immutable -->
+                <field name="rep_is_immutable" invisible="1"/>
+                <field name="rep_can_clear" invisible="1"/>
+                <field name="generate_rep" 
+                       readonly="state != 'draft' or rep_is_immutable"
+                       invisible="rep_is_immutable"/>
+                <!-- Info text when REP is immutable -->
+                <div class="text-muted small" invisible="not rep_is_immutable">
+                    <i class="fa fa-lock"/> Este pago tiene un REP y no puede ser modificado.
+                </div>
+            </xpath>
+            <xpath expr="//sheet/group" position="after">
+                <notebook invisible="not generate_rep and not rep_number_electronic">
+                    <page string="Electronic REP Info" name="rep_info">
+                        <!-- Banner: REP is immutable (processing or accepted) -->
+                        <div class="alert alert-success mb-3" role="alert"
+                             invisible="rep_state_tributacion != 'aceptado'">
+                            <i class="fa fa-check-circle"/> El REP fue aceptado por Hacienda. Este pago no puede ser modificado.
+                        </div>
+                        <!-- Banner: REP sent but no response yet -->
+                        <div class="alert alert-warning mb-3" role="alert"
+                             invisible="rep_state_tributacion != 'procesando'">
+                            <i class="fa fa-clock-o"/> El REP fue enviado exitosamente, esperando respuesta de Hacienda.
+                            Este pago no puede ser modificado mientras el REP está en proceso.
+                            <button class="btn btn-link" type="object" name="action_check_rep_hacienda"
+                                    style="padding: 0; vertical-align: baseline;">Consultar Documento</button>
+                        </div>
+                        <!-- Banner: REP generated but not sent yet -->
+                        <div class="alert alert-info mb-3" role="alert"
+                             invisible="rep_state_tributacion not in (False) or not rep_xml_comprobante">
+                            El REP ha sido generado pero aún no se ha enviado a Hacienda.
+                            Se enviará automáticamente en 5 minutos.
+                        </div>
+                        <!-- Banner: REP Rejected - can be cleared and retried -->
+                        <div class="alert alert-danger mb-3" role="alert"
+                             invisible="rep_state_tributacion != 'rechazado'">
+                            <i class="fa fa-times-circle"/> El REP fue rechazado por Hacienda.
+                            Puede limpiar los datos del REP para reintentar:
+                            <button class="btn btn-sm btn-warning ms-2" type="object" name="action_clear_rep_data">
+                                <i class="fa fa-eraser"/> Limpiar datos REP
+                            </button>
+                        </div>
+                        <!-- Banner: Error state -->
+                        <div class="alert alert-danger mb-3" role="alert"
+                             invisible="rep_state_tributacion not in ('error', 'ne')">
+                            Error al procesar el REP. Revise el mensaje de error abajo.
+                            <button class="btn btn-link" type="object" name="action_check_rep_hacienda"
+                                    style="padding: 0; vertical-align: baseline;">Reintentar consulta</button>
+                        </div>
+                        <group name="eref_info_group2">
+                            <group>
+                                <field name="rep_number_electronic" string="Clave Electrónica"/>
+                                <field name="rep_fname_xml_comprobante" invisible="1"/>
+                                <field name="rep_xml_comprobante" filename="rep_fname_xml_comprobante" widget="binary" string="Comprobante XML"/>
+                                <field name="rep_fname_xml_respuesta_tributacion" invisible="1"/>
+                                <field name="rep_xml_respuesta_tributacion" filename="rep_fname_xml_respuesta_tributacion" widget="binary" string="XML Respuesta Tributación"/>
+                            </group>
+                            <group>
+                                <field name="rep_state_tributacion" widget="badge" string="Estado Hacienda"
+                                       decoration-success="rep_state_tributacion == 'aceptado'"
+                                       decoration-danger="rep_state_tributacion in ('rechazado', 'error', 'ne')"
+                                       decoration-warning="rep_state_tributacion == 'procesando'"/>
+                                <field name="rep_return_message" string="Respuesta de Hacienda"/>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="l10n_cr_ticofac.CreditNotePopup">
+        <Dialog title="title">
+            <div class="credit-note-popup-content d-flex flex-column gap-3">
+                <div class="row">
+                    <div class="col-12 text-muted mb-2">
+                        <small>Ingrese los detalles requeridos para la Nota de Crédito Electrónica.</small>
+                    </div>
+                </div>
+
+                <!-- Reference Document (ReadOnly) -->
+                <div class="form-group" t-if="props.originalInvoiceNumber">
+                    <label class="form-label fw-bold">Documento de Referencia</label>
+                    <input type="text" class="form-control" t-att-value="props.originalInvoiceNumber" readonly="readonly" disabled="disabled"/>
+                </div>
+
+                <!-- Reference Code Selection -->
+                <div class="form-group">
+                    <label class="form-label fw-bold">Código de Referencia</label>
+                    <select class="form-select" t-model="state.referenceCodeId">
+                        <t t-foreach="referenceCodes" t-as="code" t-key="code.id">
+                            <option t-att-value="code.id">
+                                <t t-esc="code.code"/> - <t t-esc="code.name"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+
+                <!-- Reason Input -->
+                <div class="form-group">
+                    <label class="form-label fw-bold">Razón / Justificación</label>
+                    <textarea class="form-control" rows="3" t-model="state.reason"></textarea>
+                </div>
+            </div>
+
+            <t t-set-slot="footer">
+                <button class="button btn btn-primary" t-on-click="confirm">
+                    Confirmar
+                </button>
+                <button class="button btn btn-secondary" t-on-click="cancel">
+                    Cancelar
+                </button>
+            </t>
+        </Dialog>
+    </t>
+
+</templates>

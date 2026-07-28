@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="ticofac_account_res_config_settings_view" model="ir.ui.view">
+    <field name="name">res.config.settings.ticofac.account</field>
+    <field name="model">res.config.settings</field>
+    <field name="priority">30</field>
+    <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//setting[@id='document_layout_setting']/div[hasclass('content-group')]" position="inside">
+        <div class="mt16 pt16 border-top">
+          <div class="fw-bold mb8">Documentos electrónicos de Costa Rica</div>
+          <button name="action_ticofac_edit_invoice_pdf" type="object" string="Editar formato PDF de factura" class="oe_link" icon="oi-arrow-right" groups="base.group_system"/>
+          <br/>
+          <button name="action_ticofac_edit_customer_email" type="object" string="Editar correo de factura a clientes" class="oe_link" icon="oi-arrow-right" groups="base.group_system"/>
+          <br/>
+          <button name="action_ticofac_edit_vendor_email" type="object" string="Editar correo de confirmación a proveedores" class="oe_link" icon="oi-arrow-right" groups="base.group_system"/>
+          <div class="text-muted mt8">El PDF y los XML de comprobante y respuesta de Hacienda se adjuntan automáticamente al enviar.</div>
+          <div class="row mt16"><label for="ticofac_invoice_color" string="Estilo fiscal" class="col-lg-4 o_light_label"/><field name="ticofac_invoice_color"/></div>
+          <div class="row mt16"><label for="ticofac_bank_account_crc" string="Información bancaria en colones" class="col-lg-4 o_light_label"/><field name="ticofac_bank_account_crc" placeholder="Cuentas IBAN, instrucciones y medios de pago..."/></div>
+          <div class="row mt16"><label for="ticofac_bank_account_usd" string="Información bancaria en dólares" class="col-lg-4 o_light_label"/><field name="ticofac_bank_account_usd" placeholder="Cuentas IBAN, instrucciones y medios de pago..."/></div>
+        </div>
+      </xpath>
+      <xpath expr="//block[@id='account_vendor_bills']" position="after">
+        <block title="Facturación electrónica" name="ticofac_fe_settings" class="o_ticofac_settings">
+          <div class="o_ticofac_settings_banner"><i class="fa fa-building-o"/><span>Configuración fiscal centralizada para Costa Rica</span></div>
+          <setting id="ticofac_einvoice_setting" string="Activación" help="Activa la generación y el envío de comprobantes electrónicos de Costa Rica."><field name="ticofac_invoice_is_electronic"/></setting>
+        </block>
+        <block title="Identidad fiscal" name="ticofac_identity_settings" class="o_ticofac_settings">
+          <setting id="ticofac_fiscal_identity_setting" string="Datos tributarios" help="Información legal y actividad económica principal de la compañía.">
+            <div class="content-group">
+              <div class="row mt16"><label for="ticofac_company_vat" string="Cédula" class="col-lg-4 o_light_label"/><field name="ticofac_company_vat" placeholder="Ej. 3101123456"/></div>
+              <div class="mt16 mb8"><button name="action_ticofac_test_hacienda" type="object" string="Consultar datos en Hacienda" class="btn btn-secondary" icon="fa-refresh"/></div>
+              <div class="row mt16"><label for="ticofac_legal_name" string="Razón social" class="col-lg-4 o_light_label"/><field name="ticofac_legal_name"/></div>
+              <div class="row mt16"><label for="ticofac_commercial_name" string="Nombre comercial" class="col-lg-4 o_light_label"/><field name="ticofac_commercial_name"/></div>
+              <div class="row mt16"><label for="ticofac_identification_id" string="Tipo de identificación" class="col-lg-4 o_light_label"/><field name="ticofac_identification_id"/></div>
+              <div class="row mt16"><label for="ticofac_activity_id" string="Actividad económica" class="col-lg-4 o_light_label"/><field name="ticofac_activity_id" options="{'no_create': True}"/></div>
+            </div>
+          </setting>
+          <setting id="ticofac_fiscal_address_setting" string="Dirección fiscal" help="Ubicación del emisor requerida en los XML de Hacienda.">
+            <div class="content-group">
+              <div class="row mt16"><label for="ticofac_country_id" string="País" class="col-lg-4 o_light_label"/><field name="ticofac_country_id" options="{&quot;no_create&quot;: True, &quot;no_open&quot;: True}"/></div>
+              <div class="row mt16"><label for="ticofac_state_id" string="Provincia" class="col-lg-4 o_light_label"/><field name="ticofac_state_id" domain="[('country_id', '=', ticofac_country_id)]" options="{&quot;no_create&quot;: True, &quot;no_open&quot;: True}"/></div>
+              <div class="row mt16"><label for="ticofac_county_id" string="Cantón" class="col-lg-4 o_light_label"/><field name="ticofac_county_id" domain="[('state_id', '=', ticofac_state_id)]" options="{&quot;no_create&quot;: True, &quot;no_open&quot;: True}"/></div>
+              <div class="row mt16"><label for="ticofac_district_id" string="Distrito" class="col-lg-4 o_light_label"/><field name="ticofac_district_id" domain="[('county_id', '=', ticofac_county_id)]" options="{&quot;no_create&quot;: True, &quot;no_open&quot;: True}"/></div>
+              <div class="row mt16"><label for="ticofac_neighborhood_id" string="Barrio" class="col-lg-4 o_light_label"/><field name="ticofac_neighborhood_id" domain="[('district_id', '=', ticofac_district_id)]" options="{&quot;no_create&quot;: True, &quot;no_open&quot;: True}"/></div>
+              <div class="row mt16"><label for="ticofac_zip" string="Código postal" class="col-lg-4 o_light_label"/><field name="ticofac_zip"/></div>
+              <div class="row mt16"><label for="ticofac_street" string="Otras señas" class="col-lg-4 o_light_label"/><field name="ticofac_street" placeholder="Dirección exacta del emisor"/></div>
+            </div>
+          </setting>
+        </block>
+        <block title="Conexión con Hacienda" name="ticofac_hacienda_settings" class="o_ticofac_settings">
+          <setting id="ticofac_hacienda_connection_setting" string="Ambiente y credenciales" help="Credenciales y ambiente utilizados para enviar comprobantes electrónicos.">
+            <div class="content-group">
+              <div class="row mt16"><label for="ticofac_environment" string="Ambiente" class="col-lg-4 o_light_label"/><field name="ticofac_environment"/></div>
+              <div class="row mt16" invisible="ticofac_environment == 'disabled'"><label for="ticofac_hacienda_user" string="Usuario de Hacienda" class="col-lg-4 o_light_label"/><field name="ticofac_hacienda_user"/></div>
+              <div class="row mt16" invisible="ticofac_environment == 'disabled'"><label for="ticofac_hacienda_password" string="Contraseña de Hacienda" class="col-lg-4 o_light_label"/><field name="ticofac_hacienda_password" password="True"/></div>
+              <div class="mt16" invisible="ticofac_environment == 'disabled'"><button name="action_ticofac_test_token" type="object" string="Probar autenticación con Hacienda" class="btn btn-secondary" icon="fa-plug"/></div>
+            </div>
+          </setting>
+        </block>
+        <block title="Firma electrónica" name="ticofac_signature_settings" class="o_ticofac_settings">
+          <setting id="ticofac_certificate_setting" string="Certificado criptográfico" help="Llave criptográfica y PIN utilizados para firmar los comprobantes.">
+            <div class="content-group">
+              <div class="row mt16"><label for="ticofac_signature" string="Llave criptográfica" class="col-lg-4 o_light_label"/><field name="ticofac_signature"/></div>
+              <div class="row mt16"><label for="ticofac_certificate_pin" string="PIN del certificado" class="col-lg-4 o_light_label"/><field name="ticofac_certificate_pin" password="True"/></div>
+              <div class="row mt16"><label for="ticofac_certificate_expiration" string="Vencimiento" class="col-lg-4 o_light_label"/><field name="ticofac_certificate_expiration"/></div>
+              <div class="mt16"><button name="action_ticofac_validate_certificate" type="object" string="Validar certificado y cargar vencimiento" class="btn btn-secondary" icon="fa-certificate"/></div>
+            </div>
+          </setting>
+        </block>
+        <block title="Proveedor de facturación" name="ticofac_provider_settings" class="o_ticofac_settings">
+          <setting id="ticofac_provider_setting" string="Proveedor del sistema" help="Define si la emisión se realiza localmente o mediante un proveedor externo.">
+            <div class="content-group">
+              <div class="row mt16"><label for="ticofac_provider_type" string="Tipo de proveedor" class="col-lg-4 o_light_label"/><field name="ticofac_provider_type"/></div>
+              <div class="row mt16"><label for="ticofac_provider_identification" string="Identificación del proveedor" class="col-lg-4 o_light_label"/><field name="ticofac_provider_identification"/></div>
+            </div>
+          </setting>
+        </block>
+        <block title="Medios de pago" name="ticofac_payment_settings" class="o_ticofac_settings">
+          <setting id="ticofac_default_payment_method_setting"
+                   string="Medio de pago predeterminado"
+                   help="Se utilizará en facturas electrónicas cuando no se haya seleccionado un medio de pago específico para el cliente o la factura.">
+            <field name="payment_method_default_id"
+                   string="Medio de pago"
+                   options="{&quot;no_create&quot;: True, &quot;no_open&quot;: True}"/>
+          </setting>
+        </block>
+        <block title="Catálogo CABYS" name="ticofac_cabys_settings" class="o_ticofac_settings">
+          <setting id="ticofac_cabys_setting" string="CABYS predeterminado" help="Producto CABYS utilizado cuando no se ha definido uno más específico."><field name="ticofac_cabys_product_id" options="{'no_create': True}"/></setting>
+        </block>
+        <block title="Importación de facturas de proveedores" name="ticofac_vendor_bill_settings" class="o_ticofac_settings">
+          <setting string="Importar automáticamente desde correo" help="Procesa los XML de facturas recibidos en una cuenta de correo configurada.">
+            <field name="ticofac_import_bill_automatic"/>
+            <div class="content-group" invisible="not ticofac_import_bill_automatic">
+              <div class="row mt16"><label for="ticofac_import_bill_mail_server_id" string="Servidor de correo" class="col-lg-4 o_light_label"/><field name="ticofac_import_bill_mail_server_id"/></div>
+              <div class="row mt16"><label for="ticofac_import_bill_folder" string="Carpeta de correo" class="col-lg-4 o_light_label"/><field name="ticofac_import_bill_folder"/></div>
+              <div class="row mt16"><label for="ticofac_import_bill_journal_id" string="Diario de compras" class="col-lg-4 o_light_label"/><field name="ticofac_import_bill_journal_id"/></div>
+              <div class="row mt16"><label for="ticofac_import_bill_product_id" string="Producto predeterminado" class="col-lg-4 o_light_label"/><field name="ticofac_import_bill_product_id"/></div>
+              <div class="row mt16"><label for="ticofac_import_bill_account_id" string="Cuenta de gasto" class="col-lg-4 o_light_label"/><field name="ticofac_import_bill_account_id"/></div>
+              <div class="row mt16"><label for="ticofac_import_bill_account_analytic_id" string="Cuenta analítica" class="col-lg-4 o_light_label"/><field name="ticofac_import_bill_account_analytic_id"/></div>
+            </div>
+          </setting>
+        </block>      </xpath>
+    </field>
+  </record>
+</odoo>

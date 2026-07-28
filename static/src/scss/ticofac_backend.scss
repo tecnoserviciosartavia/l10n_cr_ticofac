@@ -1,0 +1,76 @@
+.o_ticofac_settings {
+  border-inline-start: 3px solid var(--o-brand-primary);
+  padding-inline-start: 1rem;
+}
+.o_ticofac_settings_banner {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin: 0 0 1rem;
+  padding: .75rem 1rem;
+  border-radius: var(--border-radius-lg, .5rem);
+  background: rgba(var(--o-brand-primary-rgb, 113, 75, 103), .08);
+  color: var(--o-main-text-color);
+}
+.o_ticofac_settings .content-group {
+  max-width: 42rem;
+}
+
+// Complex fiscal settings need their own row. Odoo's default two-column flex
+// layout otherwise makes the short toggle inherit the height of the identity form.
+.o_ticofac_settings {
+  #ticofac_einvoice_setting,
+  #ticofac_fiscal_identity_setting {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #ticofac_einvoice_setting {
+    margin-bottom: .25rem;
+  }
+}
+
+// Each functional configuration group uses a complete row. This keeps
+// credentials, certificates and catalog data visually independent.
+.o_ticofac_settings {
+  #ticofac_hacienda_connection_setting,
+  #ticofac_certificate_setting,
+  #ticofac_provider_setting,
+  #ticofac_cabys_setting {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+// Give fiscal names, activities and credentials enough room to remain readable.
+.o_ticofac_settings {
+  .content-group {
+    width: 100%;
+    max-width: 68rem;
+  }
+
+  .content-group > .row {
+    align-items: center;
+    row-gap: .35rem;
+  }
+
+  .content-group > .row > .o_field_widget:not(.o_field_boolean) {
+    width: 100%;
+    max-width: 42rem;
+    min-width: 18rem;
+  }
+
+  #ticofac_fiscal_identity_setting .content-group > .row > .o_field_widget {
+    width: 100%;
+    max-width: 48rem;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .o_ticofac_settings .content-group > .row > .o_field_widget:not(.o_field_boolean) {
+    width: 100%;
+    min-width: 0;
+  }
+}

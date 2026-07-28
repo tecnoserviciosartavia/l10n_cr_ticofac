@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_payment_register_form_inherit_cr_fe" model="ir.ui.view">
+            <field name="name">account.payment.register.form.inherit.cr.fe</field>
+            <field name="model">account.payment.register</field>
+            <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='group_payment']" position="after">
+                <field name="show_rep_option" invisible="1"/>
+                <field name="generate_rep" invisible="not show_rep_option"/>
+                <field name="rep_unavailable_message" invisible="not rep_unavailable_message" readonly="1" class="font-italic text-muted"/>
+            </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

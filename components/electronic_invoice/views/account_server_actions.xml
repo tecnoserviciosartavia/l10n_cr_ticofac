@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- 
+            Restrict "Register Payment" action to Form View only.
+            Standard ID: account.action_account_invoice_payment_group
+            Model: ir.actions.act_window
+        -->
+        <record id="account.action_account_invoice_payment_group" model="ir.actions.act_window">
+            <field name="binding_view_types">form</field>
+        </record>
+    </data>
+</odoo>

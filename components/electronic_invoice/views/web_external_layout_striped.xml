@@ -1,0 +1,60 @@
+<odoo>
+    <template id="web.external_layout_striped" name="External Layout Costa Rica">
+        <!-- Header personalizado -->
+        <div t-attf-class="o_company_#{company.id}_layout header" t-att-style="report_header_style">
+            <div class="o_background_header">
+                <table width="100%" style="border: none; margin-bottom: 10px;">
+                    <tr>
+                        <!-- Logo a la izquierda -->
+                        <td style="width: 20%; vertical-align: top;">
+                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height:90px; max-width:180px;" alt="Logo"/>
+                        </td>
+                        <!-- Nombre de la empresa y datos -->
+                        <td style="width: 80%; vertical-align: top; text-align: left;">
+                            <div>
+                                <span style="font-size:1.5em; font-weight:bold;" t-field="company.name"/>
+                                <span style="font-size:0.9em; color:#888; margin-left:20px; vertical-align:super;">
+                                    Cédula Jurídica: <t t-esc="company.vat or ''"/>
+                                </span>
+                            </div>
+                            <!-- Slogan de la empresa -->
+                            <div t-if="company.report_header" style="font-size:1em; color:#555; margin-top:2px; margin-bottom:2px;">
+                                <span t-field="company.report_header"/>
+                            </div>
+                            <div style="font-size:1em; margin-top:4px;">
+                                <t t-if="company.phone"><span>Teléfono: <t t-esc="company.phone"/></span> | </t>
+                                <t t-if="company.partner_id.street"><span t-esc="company.partner_id.street"/> | </t>
+                                <t t-if="company.website"><span t-esc="company.website"/> | </t>
+                                <t t-if="company.email"><span t-esc="company.email"/></t>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+        <t t-set="layout_background_url" t-value="'data:image/png;base64,%s' % company.layout_background_image.decode('utf-8') if company.layout_background_image and company.layout_background == 'Custom' else '/base/static/img/bg_background_template.jpg' if company.layout_background == 'Geometric' else ''"/>
+        <div t-attf-class="o_company_#{company.id}_layout article o_report_layout_striped {{  'o_report_layout_background' if company.layout_background in ['Geometric', 'Custom']  else  '' }}" t-attf-style="{{ 'background-image: url(%s);' % layout_background_url if layout_background_url else '' }}" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+            <t t-call="web.address_layout"/>
+            <t t-out="0"/>
+        </div>
+
+        <div t-attf-class="o_company_#{company.id}_layout footer o_background_footer">
+            <div class="text-center">
+                <ul class="list-inline">
+                    <div t-field="company.report_footer"/>
+                </ul>
+                <div t-if="report_type == 'pdf'" class="text-muted">
+                    Page:
+                    <span class="page"/>
+                    of
+                    <span class="topage"/>
+                </div>
+                <div t-if="report_type == 'pdf' and display_name_in_footer" class="text-muted">
+                    <span t-out="o.name">(document name)</span>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>

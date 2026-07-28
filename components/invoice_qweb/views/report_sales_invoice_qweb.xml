@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="external_layout_fecr_invoice">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+        <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+            <table style="width:100%">
+                <tr>
+                    <td width="25%">
+                    <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="margin:80px 0 0 0; max-height:100px;"/>
+                    </td>
+                    <td width="45%">
+                        <strong><t t-esc="o.company_id.commercial_name"/></strong><br/>
+                        <t t-esc="o.company_id.identification_id.name"/> <t t-esc="o.company_id.vat"/><br/>
+                        <t t-if="o.company_id.street" t-esc="o.company_id.street"/><br/>
+                        <t t-if="o.company_id.street2" t-esc="o.company_id.street2"/>
+                        <span>
+                            <t t-if="o.company_id.district_id" t-esc="o.company_id.district_id.name"/>,
+                            <t t-if="o.company_id.county_id" t-esc="o.company_id.county_id.name"/>,
+                            <t t-if="o.company_id.country_id" t-esc="o.company_id.country_id.name"/>
+                        </span><br/>
+                        <span>Tel.</span> <t t-esc="o.company_id.phone"/><br/>
+                        <t t-esc="o.company_id.email"/><br/>
+                        <t t-if="o.company_id.website" t-esc="o.company_id.website"/>
+                    </td>
+                    <td width="30%">
+                    <div class="text-center">
+                        <t t-if="o.move_type == 'in_invoice'">
+                            <span style="font-weight:bolder" t-if="not o.number_electronic">FACTURA</span>
+                            <span style="font-weight:bolder" t-if="o.number_electronic and o.tipo_documento=='FE'">FACTURA ELECTRONICA</span>
+                            <span style="font-weight:bolder" t-if="o.number_electronic and o.tipo_documento=='FEC'">FACTURA ELECTRONICA COMPRA</span>
+                            <span style="font-weight:bolder" t-if="o.number_electronic and o.tipo_documento=='TE'">TIQUETE ELECTRONICO</span>
+                        </t>
+                        <t t-if="o.move_type == 'out_invoice'">
+                            <span style="font-weight:bolder" t-if="o.number_electronic and o.tipo_documento=='FE'">FACTURA ELECTRONICA</span>
+                            <span style="font-weight:bolder" t-if="o.number_electronic and o.tipo_documento=='TE'">TIQUETE ELECTRONICO</span>
+                            <span style="font-weight:bolder" t-if="o.number_electronic and o.tipo_documento=='FEE'">FACTURA ELECTRONICA DE EXPORTACION</span>
+                            <span style="font-weight:bolder" t-if="o.number_electronic and o.tipo_documento=='ND'">NOTA DEBITO ELECTRONICA</span>
+                            <span style="font-weight:bolder" t-if="not o.number_electronic">FACTURA</span>
+                        </t>
+                        <t t-if="o.move_type == 'out_refund' or o.move_type == 'in_refund'">
+                            <span style="font-weight:bolder" t-if="o.number_electronic">NOTA DE CRÉDITO ELECTRONICA</span><br/>
+                            <span style="font-weight:bolder" t-if="not o.number_electronic">NOTA DE CRÉDITO</span><br/>
+                        </t>
+                        <span t-if="o.move_type == 'in_invoice' or o.move_type == 'in_refund'" t-esc="o.reference"/>
+                        <span t-if="o.move_type == 'out_invoice' or o.move_type == 'out_refund'" t-esc="o.number_electronic and o.number_electronic[21:41] or o.name"/>
+                    </div>
+                    <div class="text-center">
+                        <table t-if="o.date_issuance" style="width:100%;" class="dtheader rounded2">
+                        <tr>
+                            <td class="text-center">DÍA</td>
+                            <td class="text-center">MES</td>
+                            <td class="text-center">AÑO</td>
+                            <td class="text-center">HORA</td>
+                        </tr>
+                        <tr>
+                            <td class="dtcls text-center dtbg"><span t-esc="o.date_issuance and (o.date_issuance[8:10]) or o.invoice_date and (o.invoice_date[8:10]) or ''"/></td>
+                            <td class="dtcls text-center dtbg"><span t-esc="o.date_issuance and (o.date_issuance[5:7]) or o.invoice_date and (o.invoice_date[5:7]) or ''"/></td>
+                            <td class="dtcls text-center dtbg"><span t-esc="o.date_issuance and (o.date_issuance[0:4]) or o.invoice_date and (o.invoice_date[0:4]) or ''"/></td>
+                            <td class="dtcls text-center dtbg"><span t-esc="o.date_issuance and (o.date_issuance[11:16]) or ''"/></td>
+                        </tr>
+                        </table>
+                        <table t-if="not o.date_issuance" style="width:100%;" class="dtheader rounded2">
+                        <tr>
+                            <td class="text-center">FECHA</td>
+                        </tr>
+                        <tr>
+                            <td class="dtcls text-center dtbg"><span t-esc="o.invoice_date or ''"/></td>
+                        </tr>
+                        </table>
+                    </div>
+                    </td>
+                </tr>
+            </table>
+
+            <link href="http://fonts.googleapis.com/css?family=Droid+Sans" rel="stylesheet" type="text/css"/>
+            <style  t-if="o.company_id.cr_invoice_color == 'black'" type="text/css">
+
+                    body {
+                        font-family: 'Droid Sans', Arial, sans-serif;
+                        font-size:16px;
+
+                    }
+
+                .title{
+                color:#222;
+                font-size:24px;
+                font-weight:bolder;
+                }
+                .rounded2{
+                border: 1px solid;
+                padding:5px 5px;
+                }
+                .dtheader{
+                    background-color:#222;
+                    color:#ffffff;
+                    border:none;
+                    padding:5px 5px;
+                }
+                .dtcls{
+                color:#222;
+                width:25%;
+                padding:5px 5px;
+                border: 1px solid;
+                }
+                .dtbg{
+                    margin:5px 5px;
+                    background-color:#fff;
+                }
+            </style>
+            <style  t-if="o.company_id.cr_invoice_color == 'sempai'" type="text/css">
+
+                    body {
+                        font-family: 'Droid Sans', Arial, sans-serif;
+                        font-size:16px;
+
+                    }
+
+                .title{
+                color:#ce0b9d;
+                font-size:24px;
+                font-weight:bolder;
+                }
+                .rounded2{
+                border: 1px solid;
+                padding:5px 5px;
+                }
+                .dtheader{
+                    background-color:#ce0b9d;
+                    color:#ffffff;
+                    border:none;
+                    padding:5px 5px;
+                }
+                .dtcls{
+                color:#ce0b9d;
+                width:25%;
+                padding:5px 5px;
+                border: 1px solid;
+                }
+                .dtbg{
+                    margin:5px 5px;
+                    background-color:#fff;
+                }
+            </style>
+            <style  t-if="o.company_id.cr_invoice_color == 'moresempai'" type="text/css">
+
+                    body {
+                        font-family: 'Droid Sans', Arial, sans-serif;
+                        font-size:16px;
+
+                    }
+
+                .title{
+                color:#661ab2;
+                font-size:24px;
+                font-weight:bolder;
+                }
+                .rounded2{
+                border: 1px solid;
+                padding:5px 5px;
+                }
+                .dtheader{
+                    background-color:#661ab2;
+                    color:#ffffff;
+                    border:none;
+                    padding:5px 5px;
+                }
+                .dtcls{
+                color:#661ab2;
+                width:25%;
+                padding:5px 5px;
+                border: 1px solid;
+                }
+                .dtbg{
+                    margin:5px 5px;
+                    background-color:#fff;
+                }
+            </style>
+            <style  t-if="o.company_id.cr_invoice_color == 'blue'" type="text/css">
+
+                    body {
+                        font-family: 'Droid Sans', Arial, sans-serif;
+                        font-size:16px;
+
+                    }
+
+                .title{
+                color:#2874A6;
+                font-size:24px;
+                font-weight:bolder;
+                }
+                .rounded2{
+                border: 1px solid;
+                padding:5px 5px;
+                }
+                .dtheader{
+                    background-color:#2874A6;
+                    color:#ffffff;
+                    border:none;
+                    padding:5px 5px;
+                }
+                .dtcls{
+                color:#2874A6;
+                width:25%;
+                padding:5px 5px;
+                border: 1px solid;
+                }
+                .dtbg{
+                    margin:5px 5px;
+                    background-color:#fff;
+                }
+            </style>
+            <style  t-if="o.company_id.cr_invoice_color == 'green'" type="text/css">
+
+                    body {
+                        font-family: 'Droid Sans', Arial, sans-serif;
+                        font-size:16px;
+
+                    }
+
+                .title{
+                color:#196F3D;
+                font-size:24px;
+                font-weight:bolder;
+                }
+                .rounded2{
+                border: 1px solid;
+                padding:5px 5px;
+                }
+                .dtheader{
+                    background-color:#196F3D;
+                    color:#ffffff;
+                    border:none;
+                    padding:5px 5px;
+                }
+                .dtcls{
+                color:#196F3D;
+                width:25%;
+                padding:5px 5px;
+                border: 1px solid;
+                }
+                .dtbg{
+                    margin:5px 5px;
+                    background-color:#fff;
+                }
+            </style>
+        </div>
+
+        <div t-attf-class="article o_report_layout_standard o_company_#{company.id}_layout {{  'o_layout_background' if company.layout_background in ['Geometric', 'Custom']  else  '' }}" t-attf-style="background-image: url({{ 'data:image/png;base64,%s' % company.layout_background_image.decode('utf-8') if company.layout_background_image and company.layout_background == 'Custom' else '/base/static/img/bg_background_template.jpg' if company.layout_background == 'Geometric' else ''}});" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+            <div class="pt-5">
+                <!-- This div ensures that the address is not cropped by the header. -->
+                <t t-call="web.address_layout"/>
+            </div>
+            <t t-out="0"/>
+        </div>
+
+        <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout">
+            <!--div t-if="company.report_footer" class="text-center" style="border-top: 1px solid black;">
+                <ul class="list-inline mb4">
+                    <div t-field="company.report_footer"/>
+                </ul>
+            </div-->
+        </div>
+    </template>
+
+    <template id="cr_custom_external_header_boxed">
+        <html lang="es">
+            <head>
+                <meta charset="utf-8"/>
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <link href="https://fonts.googleapis.com/css?family=Droid+Sans" rel="stylesheet" type="text/css"/>
+                <style>html, body { margin: 0; padding: 0; }</style>
+            </head>
+            <body>
+                <t t-set="safe_company" t-value="(company and company._name == 'res.company' and company) or env.company"/>
+                <div class="header">
+                    <table width="100%" style="border-collapse: collapse; margin-bottom: 6px;">
+                        <tr>
+                            <td style="width: 20%; text-align: left; vertical-align: middle;">
+                                <img t-if="safe_company and safe_company.logo" t-att-src="image_data_uri(safe_company.logo)" style="max-width: 132px; max-height: 105px; margin-top: 0px;"/>
+                            </td>
+                            <td style="width: 60%; text-align: center; vertical-align: middle;">
+                                <div style="font-size: 18px; font-weight: 800; margin-bottom: 4px;">
+                                    <t t-esc="safe_company.name"/>
+                                </div>
+                                <div style="font-size: 12px; font-weight: 700; margin-bottom: 3px;">
+                                    <t t-if="safe_company and safe_company.street"><t t-esc="safe_company.street"/> , </t>
+                                    <t t-if="safe_company and safe_company.city"><t t-esc="safe_company.city"/></t>
+                                    <t t-if="safe_company and safe_company.state_id"> - <t t-esc="safe_company.state_id.name"/></t>
+                                    <t t-if="safe_company and safe_company.zip"> / <t t-esc="safe_company.zip"/></t>
+                                    <t t-if="safe_company and safe_company.country_id"> , <t t-esc="safe_company.country_id.name"/></t>
+                                </div>
+                                <div style="font-size: 11px; font-weight: 700;">
+                                    <t t-esc="(safe_company and safe_company.email) or ''"/>
+                                </div>
+                            </td>
+                            <td style="width: 20%;"></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <style>
+                    .header {
+                        position: fixed;
+                        top: -18mm;
+                        left: 0;
+                        right: 0;
+                        height: 18mm;
+                        padding-top: 2mm;
+                    }
+                    .footer {
+                        position: fixed;
+                        bottom: -18mm;
+                        left: 0;
+                        right: 0;
+                        height: 18mm;
+                        padding-bottom: 2mm;
+                    }
+                    main[role="main"] {
+                        display: block;
+                        margin-top: 1mm;
+                        margin-bottom: 18mm;
+                    }
+                    .address, .company_address, .o_company_address {
+                        display: none !important;
+                    }
+                    div[name="company_address"] {
+                        display: none !important;
+                    }
+                    @page {
+                        margin-top: 18mm;
+                        margin-bottom: 18mm;
+                        margin-left: 12mm;
+                        margin-right: 12mm;
+                    }
+                    .page {
+                        padding-top: 0 !important;
+                        margin-top: 0 !important;
+                        background: #fff;
+                    }
+                    body {
+                        font-family: 'Droid Sans', Arial, sans-serif;
+                        font-size: 13px;
+                        color: #222;
+                    }
+                    .cp-table {
+                        width: 100%;
+                        margin: 4px 0;
+                        font-size: 11px;
+                        line-height: 1.4;
+                        border-collapse: collapse;
+                        border: none !important;
+                    }
+                    .cp-table td {
+                        vertical-align: top;
+                        border: none !important;
+                        padding: 0;
+                    }
+                    .cp-left {
+                        width: 58%;
+                        padding-right: 16px;
+                        word-break: break-word;
+                        font-size: 11px;
+                    }
+                    .cp-right {
+                        width: 42%;
+                        text-align: right;
+                        font-size: 11px;
+                    }
+                    .cp-table div {
+                        margin-bottom: 4px;
+                    }
+                    .rounded2 { border: 1px solid #ddd; padding: 6px 6px; border-radius: 3px; }
+                </style>
+
+                <main role="main">
+                    <t t-out="0"/>
+                </main>
+
+                <div class="footer">
+                    <div style="border-top: 1px solid #000; padding: 8px 20px; font-size: 11px;">
+                        <div style="text-align: center; font-weight: bold; margin-bottom: 6px;">
+                            Para Transferencias:
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div t-if="safe_company and safe_company.html_bank_account1" style="flex: 1; text-align: left; padding-right: 10px;">
+                                <span t-field="safe_company.html_bank_account1"/>
+                            </div>
+                            <div t-if="safe_company and safe_company.html_bank_account2" style="flex: 1; text-align: right; padding-left: 10px;">
+                                <span t-field="safe_company.html_bank_account2"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <t t-set="doc" t-value="(docs and docs[0]) or doc or o or None"/>
+                    <t t-if="doc and doc._name == 'account.move' and ('is_electronic_document' in doc._fields and doc.is_electronic_document)">
+                        <div style="border-top: 1px solid #000; padding: 8px 20px; font-size: 10px; margin-bottom: 6px;">
+                            <div class="rounded2" style="margin-bottom: 4px;">
+                                <p style="font-size: 9px; padding: 2px; text-align: justify; margin: 0;">
+                                    Este documento constituye factura comercial con titulo ejecutivo de acuerdo al art. 460 del Código de Comercio
+                                    que podrá hacerse efectivo el día de su vencimiento y en caso de ejecución, renuncio a mi domicilio y los
+                                    trámites de juicio ejecutivo. Esta factura devengará 3% mensual después de su vencimiento.
+                                </p>
+                            </div>
+                            <p class="text-center" style="font-size: 9px; padding: 2px; margin: 0;">
+                                Autorizada mediante resolución MH-DGT-RES-0027-2024 del 13 de Noviembre del 2024 de la Dirección General de Tributación
+                            </p>
+                        </div>
+                    </t>
+                </div>
+            </body>
+        </html>
+    </template>
+
+    <template id="report_invoice_document_fecr">
+        <t t-set="o" t-value="(docs and docs[0]) or doc or o"/>
+        <t t-set="company" t-value="company or (o and o.company_id) or env.company"/>
+        <t t-out="'\ufeff'"/>
+        <t t-call="l10n_cr_ticofac.cr_custom_external_header_boxed">
+            <style>
+                body { font-family: 'Droid Sans', Arial, sans-serif; font-size: 14px; }
+                @page { margin-top: 3mm; margin-bottom: 13mm; }
+                .page { padding-top: 0 !important; margin-top: 0 !important; }
+            </style>
+
+            <div class="page" style="padding: 0 20px;">
+                <t t-set="doc_type" t-value="(o.move_type in ('out_refund', 'in_refund') and 'NOTA DE CREDITO ELECTRONICA') or (o.tipo_documento == 'TE' and 'TIQUETE ELECTRONICO') or (o.tipo_documento == 'FEE' and 'FACTURA ELECTRONICA DE EXPORTACION') or (o.tipo_documento == 'ND' and 'NOTA DEBITO ELECTRONICA') or 'FACTURA ELECTRONICA'"/>
+                <t t-set="doc_number" t-value="(o and (('number_electronic' in o._fields and o.number_electronic) or ('invoice_number' in o._fields and o.invoice_number) or ('l10n_latam_document_number' in o._fields and o.l10n_latam_document_number) or ('number' in o._fields and o.number) or ('name' in o._fields and o.name))) or ''"/>
+
+                <table class="cp-table" style="margin-top: 0;">
+                    <tr>
+                        <td class="cp-left">
+                            <div><strong>Cliente:</strong> <span t-field="o.partner_id.name"/></div>
+                            <div><strong>Cédula:</strong> <span t-field="o.partner_id.vat"/></div>
+                            <div><strong>Tel:</strong> <span t-field="o.partner_id.phone"/></div>
+                            <div><strong>C. Facturación:</strong>
+                                <t t-if="o.partner_id.email">
+                                    <t t-set="_emails" t-value="o.partner_id.email.split(',')"/>
+                                    <t t-foreach="_emails" t-as="_em">
+                                        <span t-esc="_em"/>
+                                        <br t-if="_em != _emails[-1]"/>
+                                    </t>
+                                </t>
+                            </div>
+                            <div><strong>Dirección:</strong>
+                                <t t-esc="o.partner_id.street or ''"/>
+                                <t t-if="o.partner_id.street2">, <t t-esc="o.partner_id.street2"/></t>
+                                <t t-if="o.partner_id.city">, <t t-esc="o.partner_id.city"/></t>
+                                <t t-if="o.partner_id.state_id">, <t t-esc="o.partner_id.state_id.name"/></t>
+                                <t t-if="o.partner_id.country_id">, <t t-esc="o.partner_id.country_id.name"/></t>
+                            </div>
+                        </td>
+                        <td class="cp-right">
+                            <div style="font-size: 20px; font-weight: 800; margin-bottom: 4px;"><strong><span t-esc="doc_type"/></strong></div>
+                            <div><strong>N°:</strong> <span t-field="o.name"/></div>
+                            <div><strong>N° Documento:</strong> <span t-esc="doc_number or ''"/></div>
+                            <div><strong>Condición de pago:</strong> <span t-esc="o.invoice_payment_term_id and o.invoice_payment_term_id.name or ''"/></div>
+                            <div><strong>Fecha emisión:</strong> <span t-field="o.invoice_date" t-options="{'widget': 'date'}"/></div>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="table table-sm" width="100%" style="border-collapse: collapse; margin-top: 10px; font-size: 11px;">
+                    <thead style="background: #f0f0f0;">
+                        <tr>
+                            <th style="border: 1px solid #000; padding: 5px;">Descripción</th>
+                            <th style="border: 1px solid #000; text-align: center; padding: 5px;">Cantidad</th>
+                            <th style="border: 1px solid #000; text-align: right; padding: 5px;">Precio Unit ₡</th>
+                            <th style="border: 1px solid #000; text-align: right; padding: 5px;">Sub Total ₡</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="o.invoice_line_ids" t-as="l">
+                            <tr>
+                                <td style="padding: 5px;">
+                                    <t t-set="description_lines" t-value="(l.name or '').split('\n')"/>
+                                    <t t-if="len(description_lines) &gt; 1">
+                                        <t t-foreach="description_lines[1:]" t-as="desc_line">
+                                            <span t-esc="desc_line"/><br t-if="not desc_line_last"/>
+                                        </t>
+                                    </t>
+                                    <t t-else="">
+                                        <span t-field="l.name"/>
+                                    </t>
+                                </td>
+                                <td style="text-align: center; padding: 5px;">
+                                    <span t-field="l.quantity"/>
+                                </td>
+                                <td style="text-align: right; padding: 5px;">
+                                    <span t-field="l.price_unit" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                </td>
+                                <td style="text-align: right; padding: 5px;">
+                                    <span t-field="l.price_subtotal" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+                <div style="margin-top: 10px; text-align: right;">
+                    <div style="display: inline-block; min-width: 300px;">
+                        <div style="display: flex; justify-content: space-between; padding: 3px 0;">
+                            <span>Sub Total:</span>
+                            <span t-field="o.amount_untaxed" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 3px 0;">
+                            <span>Descuento:</span>
+                            <span>0.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 3px 0;">
+                            <span>IVA:</span>
+                            <span t-field="o.amount_tax" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 3px 0; font-weight: bold;">
+                            <span>Total:</span>
+                            <span t-field="o.amount_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; font-size: 12px;">
+                    <div style="margin-bottom: 5px;">
+                        <strong>Total:</strong>
+                        <span t-esc="o.currency_id and o.currency_id.amount_to_text(o.amount_total) or ''"/>
+                    </div>
+                    <div>
+                        <strong>Tipo Cambio:</strong>
+                        <span t-esc="o.amount_total_signed and round(abs(o.amount_total / o.amount_total_signed), 5) or 0.0"/>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; margin-bottom: 80px;">
+                    <span t-field="o.narration"/>
+                </div>
+
+                <t t-if="('number_electronic' in o._fields and o.number_electronic) and o.qr_image and len(o.qr_image) &gt; 50">
+                    <div style="text-align: right; margin-top: 8px;">
+                        <img t-att-src="'data:image/png;base64,%s' % o.qr_image" style="max-width: 140px; max-height: 140px;"/>
+                    </div>
+                </t>
+
+                <div style="position: relative; height: 220px; margin-top: 20px; page-break-inside: avoid;">
+                    <div style="position: absolute; bottom: 0; left: 0; width: 60%;">
+                        <table style="width:100%; font-size:12px;">
+                            <tr>
+                                <td style="width:33%; text-align:center;">_____________________<br/>Nombre</td>
+                                <td style="width:33%; text-align:center;">_____________________<br/>No.Cédula</td>
+                                <td style="width:33%; text-align:center;">_____________________<br/>Firma</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+<template id="account.report_invoice">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-set="lang" t-value="o.partner_id.lang"/>
+            <t t-if="o._get_name_invoice_report() == 'account.report_invoice_document'" t-call="account.report_invoice_document" t-lang="lang"/>
+            <t t-if="o._get_name_invoice_report() == 'l10n_cr_ticofac.report_invoice_document_fecr'" t-call="l10n_cr_ticofac.report_invoice_document_fecr" t-lang="lang"/>
+        </t>
+    </t>
+</template>
+
+<template id="account.report_invoice_with_payments">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-set="lang" t-value="o.partner_id.lang"/>
+            <t t-set="print_with_payments" t-value="True"/>
+            <t t-if="o._get_name_invoice_report() == 'account.report_invoice_document'" t-call="account.report_invoice_document" t-lang="lang"/>
+            <t t-if="o._get_name_invoice_report() == 'l10n_cr_ticofac.report_invoice_document_fecr'" t-call="l10n_cr_ticofac.report_invoice_document_fecr" t-lang="lang"/>
+        </t>
+    </t>
+</template>
+
+</odoo>

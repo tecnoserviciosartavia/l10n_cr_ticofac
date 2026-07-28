@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Discount Code Popup Template -->
+    <t t-name="l10n_cr_ticofac.DiscountCodePopup">
+        <Dialog title="title" size="'md'">
+            <div class="discount-code-popup p-3">
+                <!-- Header info -->
+                <div class="mb-3 text-muted small">
+                    <i class="fa fa-info-circle me-1"></i>
+                    Seleccione un código de descuento requerido para la factura electrónica.
+                </div>
+
+                <!-- Clear selection button -->
+                <t t-if="state.selectedCode">
+                    <div class="mb-3">
+                        <button class="btn btn-sm btn-outline-secondary" t-on-click="clearSelection">
+                            <i class="fa fa-times me-1"></i>
+                            Quitar selección
+                        </button>
+                    </div>
+                </t>
+
+                <!-- Discount codes list -->
+                <div class="discount-code-list" style="max-height: 350px; overflow-y: auto;">
+                    <t t-foreach="discountCodes" t-as="code" t-key="code.id">
+                        <div 
+                            t-att-class="'discount-code-item p-3 mb-2 border rounded cursor-pointer d-flex align-items-center ' + (isSelected(code) ? 'bg-primary text-white border-primary' : 'bg-light')"
+                            t-on-click="() => this.selectCode(code)"
+                            style="cursor: pointer;">
+                            <!-- Code badge -->
+                            <span 
+                                t-att-class="'badge me-3 ' + (isSelected(code) ? 'bg-white text-primary' : 'bg-secondary')"
+                                style="font-size: 1rem; min-width: 40px;">
+                                <t t-esc="code.code"/>
+                            </span>
+                            <!-- Code name -->
+                            <span class="flex-grow-1">
+                                <t t-esc="code.name"/>
+                            </span>
+                            <!-- Selected indicator -->
+                            <t t-if="isSelected(code)">
+                                <i class="fa fa-check ms-2"></i>
+                            </t>
+                        </div>
+                    </t>
+
+                    <!-- Empty state -->
+                    <t t-if="!discountCodes.length">
+                        <div class="text-center text-muted p-4">
+                            <i class="fa fa-tag fa-3x mb-3 d-block"></i>
+                            <p>No hay códigos de descuento disponibles</p>
+                        </div>
+                    </t>
+                </div>
+            </div>
+
+            <!-- Footer buttons -->
+            <t t-set-slot="footer">
+                <button class="btn btn-secondary" t-on-click="cancel">
+                    <i class="fa fa-times me-1"></i>
+                    Cancelar
+                </button>
+                <button 
+                    class="btn btn-primary" 
+                    t-on-click="confirm">
+                    <i class="fa fa-check me-1"></i>
+                    Aplicar
+                </button>
+            </t>
+        </Dialog>
+    </t>
+
+</templates>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="res_config_settings_crc_view_form" model="ir.ui.view">
+    <field name="name">res.config.settings.crc.view.form</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//block[@name=&quot;main_currency_setting_container&quot;]" position="inside">
+        <setting id="ticofac_exchange_rate" string="Tipo de cambio de Costa Rica" help="Actualiza automáticamente el dólar desde Hacienda o el BCCR.">
+          <div class="content-group">
+            <field name="exchange_source"/>
+            <field name="bccr_username" invisible="exchange_source != &apos;bccr&apos;" required="exchange_source == &apos;bccr&apos;" placeholder="Usuario BCCR"/>
+            <field name="bccr_email" invisible="exchange_source != &apos;bccr&apos;" required="exchange_source == &apos;bccr&apos;" placeholder="Correo registrado en BCCR"/>
+            <field name="bccr_token" password="True" invisible="exchange_source != &apos;bccr&apos;" required="exchange_source == &apos;bccr&apos;" placeholder="Token BCCR"/>
+          </div>
+        </setting>
+      </xpath>
+    </field>
+  </record>
+</odoo>

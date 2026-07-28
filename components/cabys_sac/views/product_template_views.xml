@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Insertar campo de búsqueda por SAC en la pestaña Cabys del producto -->
+        <record id="view_product_template_form_sac_inherit" model="ir.ui.view">
+            <field name="name">product.template.form.cabys.sac.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="l10n_cr_ticofac.view_product_template_form_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='cabys']/group" position="inside">
+                    <field name="show_sac_equivalence" invisible="1"/>
+                    <field name="sac_equivalence_id" invisible="show_sac_equivalence == False" options="{'no_create': True, 'no_quick_create': True}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

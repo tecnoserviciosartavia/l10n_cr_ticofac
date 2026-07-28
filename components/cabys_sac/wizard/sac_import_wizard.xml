@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_cabys_sac_import_wizard" model="ir.ui.view">
+            <field name="name">cabys.sac.import.wizard.form</field>
+            <field name="model">cabys.sac.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Importar Equivalencias SAC - CABYS">
+                    <sheet>
+                        <group>
+                            <field name="notes" readonly="1"/>
+                            <field name="file_url"/>
+                            <field name="excel_file" filename="file_url"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Descargar desde BCCR" name="action_download" type="object" class="btn btn-primary"/>
+                        <field name="button_enable" invisible="1"/>
+                        <button string="Importar" name="action_import" type="object" class="btn btn-primary" invisible="excel_file == False"/>
+                        <button string="Cerrar" class="btn btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_cabys_sac_import_wizard" model="ir.actions.act_window">
+            <field name="name">Importar Equivalencias SAC - CABYS</field>
+            <field name="res_model">cabys.sac.import.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_cabys_sac_import" name="Importar Equivalencias SAC - CABYS" parent="l10n_cr_ticofac.menu_cabys" action="action_cabys_sac_import_wizard" sequence="51"/>
+    </data>
+</odoo>

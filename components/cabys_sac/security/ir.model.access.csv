@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cabys_sac_equivalence_user,cabys.sac.equivalence.user,model_cabys_sac_equivalence,base.group_user,1,0,0,0
+access_cabys_sac_equivalence_admin,cabys.sac.equivalence.admin,model_cabys_sac_equivalence,base.group_system,1,1,1,1
+access_cabys_sac_import_wizard_admin,cabys.sac.import.wizard.admin,model_cabys_sac_import_wizard,base.group_system,1,1,1,1

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="country_codes_view_company_form_inherit" model="ir.ui.view">
+        <field name="name">res.company.form.inherit.ticofac.address</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//label[@for='street']" position="replace">
+                <separator string="Dirección"/>
+            </xpath>
+            <xpath expr="//div[hasclass('o_address_format')]" position="replace">
+                <field name="country_id" string="País"
+                       options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                <field name="state_id" string="Provincia"
+                       domain="[('country_id', '=', country_id)]"
+                       options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                <field name="county_id" string="Cantón"
+                       domain="[('state_id', '=', state_id)]"
+                       invisible="country_id != %(base.cr)d"
+                       options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                <field name="district_id" string="Distrito"
+                       domain="[('county_id', '=', county_id)]"
+                       invisible="country_id != %(base.cr)d"
+                       options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                <field name="neighborhood_id" string="Barrio"
+                       domain="[('district_id', '=', district_id)]"
+                       invisible="country_id != %(base.cr)d"
+                       options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                <field name="city" string="Ciudad" invisible="country_id == %(base.cr)d"/>
+                <field name="zip" string="Código postal" placeholder="Se calcula automáticamente"
+                       readonly="country_id == %(base.cr)d"/>
+                <field name="street" string="Dirección exacta" placeholder="Calle, avenida y otras señas"/>
+                <field name="street2" string="Otras señas"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
