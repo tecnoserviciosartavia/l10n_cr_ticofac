@@ -1,7 +1,6 @@
 /** @odoo-module **/
 
 import { PosOrder } from "@point_of_sale/app/models/pos_order";
-import { qrCodeSrc } from "@point_of_sale/utils";
 import { patch } from "@web/core/utils/patch";
 
 // WeakMap storage - completely outside Odoo's proxy
@@ -104,9 +103,8 @@ patch(PosOrder.prototype, {
         json.fiscal_document_version = "4.4";
         json.fiscal_qr_code =
             this.config.ticofac_receipt_enabled &&
-            this.config.ticofac_receipt_show_qr &&
             numberElectronic
-                ? qrCodeSrc(numberElectronic, { size: 220 })
+                ? `/ticofac/pos/qr/${encodeURIComponent(numberElectronic)}`
                 : false;
         return json;
     },

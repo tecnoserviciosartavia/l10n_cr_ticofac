@@ -102,8 +102,15 @@
             <div t-if="props.data.headerData.ticofac_receipt_enabled"
                  class="text-center mt-2"
                  style="font-size:9px; line-height:1.2;">
-                Representación gráfica del comprobante electrónico v4.4<br/>
+                Autorizada mediante resolución N.° MH-DGT-RES-0027-2024<br/>
+                del 13 de noviembre de 2024. Versión 4.4<br/>
                 Conserve este documento y los archivos XML asociados.
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('pos-receipt-order-data')][p]" position="replace">
+            <div class="pos-receipt-order-data">
+                <div t-esc="props.data.name"/>
+                <div id="order-date" t-esc="props.data.date"/>
             </div>
         </xpath>
     </t>

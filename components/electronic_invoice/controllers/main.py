@@ -3,7 +3,11 @@ try:
 except ImportError:
     from io import BytesIO
 import zipfile
+import re
 from datetime import datetime
+
+import qrcode
+
 from odoo import http
 from odoo.http import request
 from odoo.http import content_disposition
@@ -11,6 +15,39 @@ import ast
 
 
 class Binary(http.Controller):
+
+    @http.route(
+        "/ticofac/pos/qr/<string:clave>",
+        type="http",
+        auth="public",
+        methods=["GET"],
+        csrf=False,
+        readonly=True,
+    )
+    def ticofac_pos_fiscal_qr(self, clave, **kwargs):
+        """Return a printable QR containing a valid 4.4 electronic key."""
+        if not re.fullmatch(r"[0-9A-Za-z]{50}", clave or ""):
+            return request.not_found()
+
+        qr = qrcode.QRCode(
+            version=None,
+            error_correction=qrcode.constants.ERROR_CORRECT_M,
+            box_size=8,
+            border=4,
+        )
+        qr.add_data(clave)
+        qr.make(fit=True)
+        image = qr.make_image(fill_color="black", back_color="white")
+        output = BytesIO()
+        image.save(output, format="PNG")
+        return request.make_response(
+            output.getvalue(),
+            headers=[
+                ("Content-Type", "image/png"),
+                ("Cache-Control", "public, max-age=31536000, immutable"),
+                ("X-Content-Type-Options", "nosniff"),
+            ],
+        )
 
     @http.route('/web/binary/download_document', type='http', auth="public")
     def download_document(self, **kw):
