@@ -21,3 +21,21 @@ class ResConfigSettings(models.TransientModel):
         related="pos_config_id.ticofac_receipt_show_customer",
         readonly=False,
     )
+    pos_ticofac_receipt_show_address = fields.Boolean(
+        related="pos_config_id.ticofac_receipt_show_address", readonly=False,
+    )
+    pos_ticofac_receipt_show_activity = fields.Boolean(
+        related="pos_config_id.ticofac_receipt_show_activity", readonly=False,
+    )
+    pos_ticofac_receipt_show_payment = fields.Boolean(
+        related="pos_config_id.ticofac_receipt_show_payment", readonly=False,
+    )
+    pos_ticofac_receipt_qr_label = fields.Char(
+        related="pos_config_id.ticofac_receipt_qr_label", readonly=False,
+    )
+    pos_ticofac_receipt_qr_size = fields.Selection(
+        related="pos_config_id.ticofac_receipt_qr_size", readonly=False,
+    )
+    pos_ticofac_receipt_legal_text = fields.Text(
+        related="pos_config_id.ticofac_receipt_legal_text", readonly=False,
+    )

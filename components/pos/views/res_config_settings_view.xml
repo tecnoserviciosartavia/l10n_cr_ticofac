@@ -25,7 +25,31 @@
                             <label for="pos_ticofac_receipt_show_customer" string="Mostrar datos del cliente" class="col-lg-4 o_light_label"/>
                             <field name="pos_ticofac_receipt_show_customer"/>
                         </div>
-                        <div class="text-muted mt8">El encabezado y pie personalizados se mantienen en las opciones estándar de Odoo ubicadas en esta misma sección.</div>
+                        <div class="row mt16">
+                            <label for="pos_ticofac_receipt_show_address" string="Mostrar dirección del emisor" class="col-lg-4 o_light_label"/>
+                            <field name="pos_ticofac_receipt_show_address"/>
+                        </div>
+                        <div class="row mt16">
+                            <label for="pos_ticofac_receipt_show_activity" string="Mostrar actividad económica" class="col-lg-4 o_light_label"/>
+                            <field name="pos_ticofac_receipt_show_activity"/>
+                        </div>
+                        <div class="row mt16">
+                            <label for="pos_ticofac_receipt_show_payment" string="Mostrar datos de pago" class="col-lg-4 o_light_label"/>
+                            <field name="pos_ticofac_receipt_show_payment"/>
+                        </div>
+                        <div class="row mt16" invisible="not pos_ticofac_receipt_show_qr">
+                            <label for="pos_ticofac_receipt_qr_size" string="Tamaño del QR" class="col-lg-4 o_light_label"/>
+                            <field name="pos_ticofac_receipt_qr_size"/>
+                        </div>
+                        <div class="row mt16" invisible="not pos_ticofac_receipt_show_qr">
+                            <label for="pos_ticofac_receipt_qr_label" string="Texto bajo el QR" class="col-lg-4 o_light_label"/>
+                            <field name="pos_ticofac_receipt_qr_label" placeholder="Escanee para consultar la clave electrónica"/>
+                        </div>
+                        <div class="row mt16">
+                            <label for="pos_ticofac_receipt_legal_text" string="Texto legal del cierre" class="col-lg-4 o_light_label"/>
+                            <field name="pos_ticofac_receipt_legal_text" placeholder="Resolución y versión del comprobante"/>
+                        </div>
+                        <div class="text-muted mt8">El encabezado y pie libres se editan en las opciones estándar de esta misma sección.</div>
                     </div>
                 </setting>
             </xpath>

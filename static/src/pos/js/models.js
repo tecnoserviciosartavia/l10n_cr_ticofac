@@ -101,12 +101,21 @@ patch(PosOrder.prototype, {
         json.headerData.partner = this.get_partner() || false;
         json.headerData.ticofac_receipt_enabled = this.config.ticofac_receipt_enabled;
         json.headerData.ticofac_receipt_show_customer = this.config.ticofac_receipt_show_customer;
+        json.headerData.ticofac_receipt_show_address = this.config.ticofac_receipt_show_address;
+        json.headerData.ticofac_receipt_show_activity = this.config.ticofac_receipt_show_activity;
         json.headerData.order_date = json.date;
         json.headerData.terminal = this.config.name;
         json.headerData.economic_activity =
             this.company.activity_id?.code || this.company.activity_id?.name || false;
         json.fiscal_sale_condition = "Contado";
         json.currency_name = this.currency?.name || "CRC";
+        json.fiscal_show_payment = this.config.ticofac_receipt_show_payment;
+        json.fiscal_qr_label = this.config.ticofac_receipt_qr_label || "";
+        json.fiscal_qr_size_cm =
+            ({ small: "2.4cm", medium: "3cm", large: "3.6cm" })[
+                this.config.ticofac_receipt_qr_size
+            ] || "3.6cm";
+        json.fiscal_legal_text = this.config.ticofac_receipt_legal_text || "";
         json.fiscal_document_version = "4.4";
         json.fiscal_qr_code =
             this.config.ticofac_receipt_enabled &&
