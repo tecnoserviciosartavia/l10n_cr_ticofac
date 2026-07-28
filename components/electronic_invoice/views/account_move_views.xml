@@ -9,26 +9,26 @@
             <xpath expr="//sheet" position="before">
                 <div class="alert alert-info mb-0" role="alert"
                      invisible="(state_tributacion not in (False)) or (state in ('draft', 'cancel'))">
-                    The document has not yet been issued, it will be sent automatically in 5 minutes, if you need to
-                    send it manually press
+                    El documento todavía no ha sido emitido. Se enviará automáticamente en 5 minutos. Para enviarlo
+                    manualmente, presione
                     <button class="btn btn-link" type="object" name="generate_and_send_invoice"
-                            style="padding: 0; vertical-align: baseline;">Send Document</button>
+                            style="padding: 0; vertical-align: baseline;">Enviar documento</button>
                 </div>
                 <div class="alert alert-warning mb-0" role="alert"
                     invisible="state_tributacion not in ('procesando') or state  in ('draft', 'cancel')">
-                    The document was issued successfully, however we still do not have the answer, it will be consulted
-                    in 10 minutes, if you wish to consult it manually press
+                    El documento fue emitido correctamente, pero todavía no se ha recibido la respuesta. Se consultará
+                    en 10 minutos. Para consultarlo manualmente, presione
                     <button class="btn btn-link" type="object" name="action_check_hacienda_for_invoices"
-                            style="padding: 0; vertical-align: baseline;">Consult Document</button>
+                            style="padding: 0; vertical-align: baseline;">Consultar documento</button>
                 </div>
             </xpath>
 
             <xpath expr="//button[@name='button_draft']" position="after">
-                <button name="action_send_mrs_to_hacienda" type="object" string="Send Receiver Message"
+                <button name="action_send_mrs_to_hacienda" type="object" string="Enviar mensaje receptor"
                         invisible="(move_type not in ('in_invoice', 'in_refund', 'entry')) or (tipo_documento == 'FEC')"/>
-                <button name="action_create_fec" type="object" string="Send FEC"
+                <button name="action_create_fec" type="object" string="Enviar FEC"
                         invisible="tipo_documento != 'FEC' or state_tributacion not in (False,'rechazado','error')"/>
-                <button name="create_partner_from_xml" class="btn btn-primary" type="object" string="Create Provider"
+                <button name="create_partner_from_xml" class="btn btn-primary" type="object" string="Crear proveedor"
                         invisible="move_type in ('entry', 'out_invoice', 'out_refund') or partner_id != False or xml_supplier_approval == False"/>
             </xpath>
 
@@ -133,11 +133,11 @@
             </xpath>
 
             <xpath expr="//page[2]" position="after">
-                <page name="fe_invoice_data" string="Electronic Information"
+                <page name="fe_invoice_data" string="Información electrónica"
                       invisible="move_type not in ('out_invoice','out_refund','in_invoice','in_refund')">
                     <field name="qr_image" widget="image" invisible="1"/>
                     <group id="fe_tab_group" col="2">
-                        <group string="Electronic Acceptance" name="fe_in_info_group" colspan="2" col="4"
+                        <group string="Aceptación electrónica" name="fe_in_info_group" colspan="2" col="4"
                             invisible="tipo_documento == 'FEC' or move_type in ('out_invoice','out_refund')">
 
                             <field name="fname_xml_supplier_approval" invisible="1"/>
@@ -150,25 +150,25 @@
                                 invisible="move_type in ('out_invoice','out_refund') or tipo_documento == 'FEC'"/>
                         </group>
                         <group name="eref_info_group" colspan="2">
-                            <group string="Electronic Document Reference" name="eref_info_group1" colspan="2">
-                                <field name="reference_code_id" readonly="(state != 'draft')"/>
-                                <field name="reference_document_id" readonly="(state != 'draft')"/>
-                                <field name="invoice_id" domain="[('number_electronic', '!=', False)]"
+                            <group string="Referencia del documento electrónico" name="eref_info_group1" colspan="2">
+                                <field name="reference_code_id" string="Código de referencia" readonly="(state != 'draft')"/>
+                                <field name="reference_document_id" string="Tipo de documento de referencia" readonly="(state != 'draft')"/>
+                                <field name="invoice_id" string="Factura original" domain="[('number_electronic', '!=', False)]"
                                        readonly="(state != 'draft')"/>
-                                <field name="not_loaded_invoice"
+                                <field name="not_loaded_invoice" string="Número de factura original no cargada"
                                        readonly="state != 'draft'"
                                        invisible="invoice_id  != False"/>
-                                <field name="not_loaded_invoice_date"
+                                <field name="not_loaded_invoice_date" string="Fecha de factura original no cargada"
                                        readonly="(state != 'draft')"
                                        invisible="(invoice_id != False)"/>
                             </group>
-                            <group string="Electronic Receipts" name="eref_info_group2" colspan="2">
+                            <group string="Comprobantes electrónicos" name="eref_info_group2" colspan="2">
                                 <field name="fname_xml_comprobante" invisible="1" readonly="1"/>
-                                <field name="xml_comprobante" filename="fname_xml_comprobante"/>
+                                <field name="xml_comprobante" string="Comprobante XML" filename="fname_xml_comprobante"/>
                                 <field name="fname_xml_respuesta_tributacion" invisible="1" readonly="1"/>
-                                <field name="xml_respuesta_tributacion" filename="fname_xml_respuesta_tributacion"/>
-                                <field name="state_tributacion" readonly="1"/>
-                                <field name="electronic_invoice_return_message" readonly="1"/>
+                                <field name="xml_respuesta_tributacion" string="Respuesta XML de Hacienda" filename="fname_xml_respuesta_tributacion"/>
+                                <field name="state_tributacion" string="Estado de factura electrónica" readonly="1"/>
+                                <field name="electronic_invoice_return_message" string="Respuesta de Hacienda" readonly="1"/>
                             </group>
                         </group>
                     </group>
@@ -204,7 +204,7 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_account_invoice_filter"/>
         <field name="arch" type="xml">
-            <field name="name" string="Invoice"
+            <field name="name" string="Factura"
                    filter_domain="['|', '|', '|' , '|', '|', ('name', 'ilike', self), ('invoice_origin', 'ilike', self), ('ref', 'ilike', self), ('invoice_payment_ref', 'ilike', self), ('partner_id', 'child_of', self), ('reference', 'ilike', self)]"/>
         </field>
     </record>
