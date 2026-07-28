@@ -93,10 +93,11 @@ patch(PosOrder.prototype, {
 
     export_for_printing() {
         const json = super.export_for_printing(...arguments);
-        const numberElectronic = this.get_number_electronic();
+        const numberElectronic = this.get_number_electronic() || this.number_electronic;
         json.headerData.number_electronic = numberElectronic;
-        json.headerData.sequence = this.get_sequence() || numberElectronic?.substring(21, 41);
-        json.headerData.tipo_documento = this.get_tipo_documento();
+        json.headerData.sequence =
+            this.get_sequence() || this.sequence || numberElectronic?.substring(21, 41);
+        json.headerData.tipo_documento = this.get_tipo_documento() || this.tipo_documento;
         json.headerData.partner = this.get_partner() || false;
         json.headerData.ticofac_receipt_enabled = this.config.ticofac_receipt_enabled;
         json.headerData.ticofac_receipt_show_customer = this.config.ticofac_receipt_show_customer;
