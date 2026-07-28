@@ -8,6 +8,7 @@
             <field name="payment_reference" position="after">
                 <field
                     name="show_cabys_codes_invoice_qweb"
+                    string="Mostrar códigos CABYS en la factura"
                     invisible="move_type not in ('out_invoice', 'out_refund','in_invoice', 'in_refund')"
                 />
             </field>

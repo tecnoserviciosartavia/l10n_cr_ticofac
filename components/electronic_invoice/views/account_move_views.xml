@@ -93,13 +93,13 @@
             </xpath>
 
             <xpath expr="//field[@name='invoice_date']" position="after">
-                <field name="date_issuance" readonly="1"
+                <field name="date_issuance" string="Fecha de emisión" readonly="1"
                        invisible="(move_type not in ('out_invoice', 'out_refund','in_invoice', 'in_refund'))"/>
-                <field name="tipo_documento"
+                <field name="tipo_documento" string="Tipo de comprobante"
                        readonly="(state != 'draft')"
                        invisible="move_type not in ('out_invoice','out_refund','in_invoice','in_refund')"
                        required="move_type in ('out_invoice','out_refund','in_invoice', 'in_refund')"/>
-                <field name="payment_methods_id"
+                <field name="payment_methods_id" string="Medio de pago"
                        readonly="(state != 'draft')"
                        invisible="move_type not in ('out_invoice', 'out_refund','in_invoice', 'in_refund')"/>
             </xpath>
