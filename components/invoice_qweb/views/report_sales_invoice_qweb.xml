@@ -546,9 +546,12 @@
                     <span t-field="o.narration"/>
                 </div>
 
-                <t t-if="('number_electronic' in o._fields and o.number_electronic) and o.qr_image and len(o.qr_image) &gt; 50">
-                    <div style="text-align: right; margin-top: 8px;">
-                        <img t-att-src="'data:image/png;base64,%s' % o.qr_image" style="max-width: 140px; max-height: 140px;"/>
+                <t t-if="('number_electronic' in o._fields and o.number_electronic) and o.qr_image">
+                    <div style="text-align: right; margin-top: 8px; page-break-inside: avoid;">
+                        <div style="font-size: 10px; margin-bottom: 4px;">Clave electrónica</div>
+                        <img t-att-src="image_data_uri(o.qr_image)"
+                             alt="QR de la clave electrónica"
+                             style="width: 140px; height: 140px;"/>
                     </div>
                 </t>
 
