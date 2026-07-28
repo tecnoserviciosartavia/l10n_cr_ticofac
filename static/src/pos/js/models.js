@@ -105,6 +105,7 @@ patch(PosOrder.prototype, {
         json.headerData.ticofac_receipt_show_activity = this.config.ticofac_receipt_show_activity;
         json.headerData.order_date = json.date;
         json.headerData.terminal = this.config.name;
+        json.headerData.is_restaurant = this.config.module_pos_restaurant === true;
         json.headerData.economic_activity =
             this.company.activity_id?.code || this.company.activity_id?.name || false;
         json.fiscal_sale_condition = "Contado";

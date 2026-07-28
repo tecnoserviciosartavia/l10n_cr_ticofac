@@ -58,7 +58,7 @@
                     </div>
                 </div>
 
-                <div class="text-center mt-2">
+                <div t-if="props.data.is_restaurant" class="text-center mt-2">
                     <div t-if="props.data.terminal"><strong>Terminal:</strong> <t t-esc="props.data.terminal"/></div>
                     <div t-if="props.data.cashier">
                         <strong>Atendido por:</strong> <t t-esc="props.data.cashier"/>
