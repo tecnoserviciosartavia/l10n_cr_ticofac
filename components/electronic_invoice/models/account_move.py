@@ -33,6 +33,10 @@ class AccountInvoiceElectronic(models.Model):
 
     # === Electronic Number Reference fields === #
     number_electronic = fields.Char(string="Electronic number", copy=False, index=True)
+    customer_purchase_order = fields.Char(
+        string="Orden de compra del cliente", copy=False, size=100,
+        help="Referencia comercial opcional solicitada por el cliente.",
+    )
     sequence = fields.Char(string="Consecutive", readonly=True, copy=False)
     date_issuance = fields.Char(string="Date of issue", copy=False)
     consecutive_number_receiver = fields.Char(

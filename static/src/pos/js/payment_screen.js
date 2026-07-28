@@ -5,6 +5,8 @@ import {PaymentScreen} from "@point_of_sale/app/screens/payment_screen/payment_s
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { _t } from "@web/core/l10n/translation";
 import { CreditNotePopup } from "./credit_note_popup";
+import { TextInputPopup } from "@point_of_sale/app/utils/input_popups/text_input_popup";
+import { makeAwaitable } from "@point_of_sale/app/store/make_awaitable_dialog";
 
 
 patch(PaymentScreen.prototype, {
@@ -16,6 +18,19 @@ patch(PaymentScreen.prototype, {
         this.orm = this.env.services.orm;
         this.dialog = this.env.services.dialog;
         this.tipo_documento = null;
+    },
+
+    async editCustomerPurchaseOrder() {
+        const order = this.currentOrder;
+        const value = await makeAwaitable(this.dialog, TextInputPopup, {
+            title: _t("Orden de compra del cliente"),
+            startingValue: order.get_customer_purchase_order() || "",
+            placeholder: _t("Ej.: OC-4500123456 (opcional)"),
+            rows: 1,
+        });
+        if (value !== undefined) {
+            order.set_customer_purchase_order(value);
+        }
     },
 
     /**

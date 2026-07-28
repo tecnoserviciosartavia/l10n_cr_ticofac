@@ -468,6 +468,7 @@
                             <div><strong>N°:</strong> <span t-field="o.name"/></div>
                             <div><strong>N° Documento:</strong> <span t-esc="doc_number or ''"/></div>
                             <div><strong>Condición de pago:</strong> <span t-esc="o.invoice_payment_term_id and o.invoice_payment_term_id.name or ''"/></div>
+                            <div t-if="o.customer_purchase_order"><strong>Orden de compra:</strong> <span t-field="o.customer_purchase_order"/></div>
                             <div><strong>Fecha emisión:</strong> <span t-field="o.invoice_date" t-options="{'widget': 'date'}"/></div>
                         </td>
                     </tr>

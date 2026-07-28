@@ -864,12 +864,15 @@ def gen_xml_v43(inv, sale_conditions, total_servicio_gravado,
         if razon_referencia:   
             sb.append('<Razon>' + str(razon_referencia) + '</Razon>')
         sb.append('</InformacionReferencia>')
-    if invoice_comments or invoice_ref:
+    purchase_order = (getattr(inv, "customer_purchase_order", False) or "").strip()
+    if invoice_comments or invoice_ref or purchase_order:
         sb.append('<Otros>')
         if invoice_comments:
             sb.append('<OtroTexto>' + str(invoice_comments) + '</OtroTexto>')
         if invoice_ref:
-            sb.append('<OtroContenido>'+ str(invoice_ref) + '</OtroContenido>')
+            sb.append('<OtroContenido>' + escape(str(invoice_ref)) + '</OtroContenido>')
+        if purchase_order:
+            sb.append('<OtroTexto>Orden de compra: ' + escape(purchase_order) + '</OtroTexto>')
         sb.append('</Otros>')
 
     sb.append('</' + fe_enums.tagName[inv.tipo_documento] + '>')

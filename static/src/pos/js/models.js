@@ -15,6 +15,7 @@ function getOrderData(order) {
             journal_id: null,
             refund_reason: null,
             refund_reference_code_id: null,
+            customer_purchase_order: null,
         });
     }
     return _orderData.get(order);
@@ -30,6 +31,7 @@ patch(PosOrder.prototype, {
         data.journal_id = vals.journal_id || null;
         data.refund_reason = vals.refund_reason || null;
         data.refund_reference_code_id = vals.refund_reference_code_id || null;
+        data.customer_purchase_order = vals.customer_purchase_order || null;
     },
 
     set_tipo_documento(tipoDoc) {
@@ -54,6 +56,13 @@ patch(PosOrder.prototype, {
     },
     get_sequence() {
         return getOrderData(this).sequence;
+    },
+
+    set_customer_purchase_order(value) {
+        getOrderData(this).customer_purchase_order = (value || "").trim().slice(0, 100) || null;
+    },
+    get_customer_purchase_order() {
+        return getOrderData(this).customer_purchase_order;
     },
 
     set_journal_id(number) {
@@ -87,6 +96,7 @@ patch(PosOrder.prototype, {
         json.journal_id = data.journal_id;
         json.refund_reason = data.refund_reason;
         json.refund_reference_code_id = data.refund_reference_code_id;
+        json.customer_purchase_order = data.customer_purchase_order;
         
         return json;
     },
@@ -99,6 +109,7 @@ patch(PosOrder.prototype, {
             this.get_sequence() || this.sequence || numberElectronic?.substring(21, 41);
         json.headerData.tipo_documento = this.get_tipo_documento() || this.tipo_documento;
         json.headerData.partner = this.get_partner() || false;
+        json.headerData.customer_purchase_order = this.get_customer_purchase_order();
         json.headerData.ticofac_receipt_enabled = this.config.ticofac_receipt_enabled;
         json.headerData.ticofac_receipt_show_customer = this.config.ticofac_receipt_show_customer;
         json.headerData.ticofac_receipt_show_address = this.config.ticofac_receipt_show_address;

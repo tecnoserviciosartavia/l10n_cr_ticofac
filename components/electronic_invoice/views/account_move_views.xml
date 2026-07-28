@@ -81,6 +81,13 @@
                         domain="[('code', 'in', [14, 16, 99])]"/>
             </xpath>
 
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="customer_purchase_order"
+                       placeholder="Ej.: OC-4500123456"
+                       invisible="move_type not in ('out_invoice', 'out_refund')"
+                       readonly="state != 'draft'"/>
+            </xpath>
+
             <xpath expr="//field[@name='invoice_date']" position="attributes">
                 <attribute name="readonly"></attribute>
             </xpath>

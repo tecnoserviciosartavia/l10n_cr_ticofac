@@ -38,6 +38,9 @@ class PosOrder(models.Model):
     )
 
     number_electronic = fields.Char(string="Electronic Number", copy=False, index=True)
+    customer_purchase_order = fields.Char(
+        string="Orden de compra del cliente", copy=False, size=100,
+    )
     sequence = fields.Char(string="Consecutive", readonly=True)
     journal_id = fields.Char(string="Journal ID", copy=False)
 
@@ -487,6 +490,7 @@ class PosOrder(models.Model):
                     self.number_electronic[21:41] if self.number_electronic else False
                 ),
                 "number_electronic": self.number_electronic,
+                "customer_purchase_order": self.customer_purchase_order,
                 "name": (
                     self.number_electronic[21:41] if self.number_electronic else False
                 ),
@@ -556,6 +560,7 @@ class PosOrder(models.Model):
         vals["tipo_documento"] = ui_order.get("tipo_documento")
         vals["sequence"] = ui_order.get("sequence")
         vals["number_electronic"] = ui_order.get("number_electronic")
+        vals["customer_purchase_order"] = ui_order.get("customer_purchase_order")
         vals["refund_reason"] = ui_order.get("refund_reason")
 
         # Handle refund_reference_code_id
