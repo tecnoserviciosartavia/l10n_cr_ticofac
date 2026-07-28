@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import fields, models
 
 
 class PosConfig(models.Model):
@@ -49,12 +49,3 @@ class PosConfig(models.Model):
             "Conserve este documento y los archivos XML asociados."
         ),
     )
-
-
-class ResCompany(models.Model):
-    _inherit = "res.company"
-
-    @api.model
-    def _load_pos_data_fields(self, config_id):
-        fields_to_load = super()._load_pos_data_fields(config_id)
-        return fields_to_load + ["uses_default_logo"]
