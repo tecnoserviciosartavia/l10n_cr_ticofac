@@ -74,3 +74,27 @@
     min-width: 0;
   }
 }
+
+// Fiscal statuses use Odoo's native badge widget with strong semantic colors.
+.o_ticofac_hacienda_status.o_field_badge .badge,
+.o_ticofac_hacienda_status .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .35rem .7rem;
+  border: 1px solid transparent;
+  font-weight: 600;
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .18), inset 0 1px 0 rgba(255, 255, 255, .18);
+
+  &::before {
+    font-family: FontAwesome;
+    font-size: .85em;
+  }
+
+  &.text-bg-success { color: #fff !important; background: #168a58 !important; border-color: #0f7147; &::before { content: "\f058"; } }
+  &.text-bg-danger  { color: #fff !important; background: #d9364a !important; border-color: #b92335; &::before { content: "\f057"; } }
+  &.text-bg-warning { color: #352400 !important; background: #f0ad00 !important; border-color: #c88f00; &::before { content: "\f017"; } }
+  &.text-bg-info    { color: #fff !important; background: #087f8f !important; border-color: #066876; &::before { content: "\f05a"; } }
+  &.text-bg-300     { color: #fff !important; background: #667085 !important; border-color: #50596c; &::before { content: "\f056"; } }
+}

@@ -43,12 +43,39 @@ class PosOrder(models.Model):
     )
     sequence = fields.Char(string="Consecutive", readonly=True)
     journal_id = fields.Char(string="Journal ID", copy=False)
+    ticofac_invoice_name = fields.Char(
+        related="account_move.name", string="Factura", readonly=True, tracking=False,
+    )
+    ticofac_invoice_state = fields.Selection(
+        related="account_move.state_tributacion",
+        string="Estado de Hacienda",
+        readonly=True,
+        tracking=False,
+    )
+    ticofac_origin_invoice_name = fields.Char(
+        string="Factura de origen",
+        compute="_compute_ticofac_origin_invoice_name",
+    )
 
     # Refund / Credit Note Fields
     refund_reason = fields.Char(string="Refund Reason")
     refund_reference_code_id = fields.Many2one(
         comodel_name="reference.code", string="Reference Code"
     )
+
+    @api.depends(
+        "lines.refunded_orderline_id.order_id.account_move.name",
+        "lines.refunded_orderline_id.order_id.sequence",
+    )
+    def _compute_ticofac_origin_invoice_name(self):
+        for order in self:
+            original_orders = order.lines.mapped("refunded_orderline_id.order_id")
+            names = []
+            for original in original_orders:
+                name = original.account_move.name or original.sequence
+                if name and name not in names:
+                    names.append(name)
+            order.ticofac_origin_invoice_name = ", ".join(names)
 
     # =========================================================================
     # CREATE/WRITE OVERRIDES - Odoo 18 POS passes data directly to create/write
@@ -79,6 +106,48 @@ class PosOrder(models.Model):
                 _logger.error(f"Failed to convert refund_reference_code_id: {e}")
 
         return super().write(vals)
+
+    def ticofac_resend_invoice_email(self):
+        """Reenvía una factura aceptada sin exponer Contabilidad al cajero."""
+        self.ensure_one()
+        if not self.env.user.has_group("point_of_sale.group_pos_user"):
+            raise UserError(_("No tiene permisos para reenviar comprobantes desde el POS."))
+        invoice = self.account_move
+        if not invoice:
+            raise UserError(_("Este pedido no tiene una factura asociada."))
+        if invoice.company_id != self.company_id:
+            raise UserError(_("La factura pertenece a otra compañía."))
+        if invoice.state_tributacion != "aceptado":
+            raise UserError(_("Solo se pueden reenviar comprobantes aceptados por Hacienda."))
+        if not invoice.partner_id.email:
+            raise UserError(_("El cliente no tiene un correo electrónico configurado."))
+
+        action = invoice.action_invoice_sent()
+        context = action.get("context", {})
+        template = self.env["mail.template"].browse(
+            context.get("default_template_id")
+        ).exists()
+        attachment_ids = context.get("default_attachment_ids", [])
+        if not template:
+            raise UserError(_("No se encontró la plantilla de correo de factura."))
+        try:
+            template.with_context(type="binary", default_type="binary").send_mail(
+                invoice.id,
+                force_send=True,
+                raise_exception=True,
+                email_values={"attachment_ids": [(6, 0, attachment_ids)]},
+            )
+        finally:
+            template.attachment_ids = [(5, 0, 0)]
+        _logger.info(
+            "POS user %s resent invoice %s to %s",
+            self.env.user.id, invoice.name, invoice.partner_id.email,
+        )
+        return {
+            "success": True,
+            "email": invoice.partner_id.email,
+            "invoice_name": invoice.name,
+        }
 
     # =========================================================================
     # FE VALIDATION METHODS

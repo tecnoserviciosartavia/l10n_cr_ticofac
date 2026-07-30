@@ -867,12 +867,13 @@ def gen_xml_v43(inv, sale_conditions, total_servicio_gravado,
     purchase_order = (getattr(inv, "customer_purchase_order", False) or "").strip()
     if invoice_comments or invoice_ref or purchase_order:
         sb.append('<Otros>')
+        # XSD v4.4 defines a sequence: every OtroTexto must precede OtroContenido.
         if invoice_comments:
-            sb.append('<OtroTexto>' + str(invoice_comments) + '</OtroTexto>')
-        if invoice_ref:
-            sb.append('<OtroContenido>' + escape(str(invoice_ref)) + '</OtroContenido>')
+            sb.append('<OtroTexto>' + escape(str(invoice_comments)[:500]) + '</OtroTexto>')
         if purchase_order:
             sb.append('<OtroTexto>Orden de compra: ' + escape(purchase_order) + '</OtroTexto>')
+        if invoice_ref:
+            sb.append('<OtroContenido>' + escape(str(invoice_ref)[:500]) + '</OtroContenido>')
         sb.append('</Otros>')
 
     sb.append('</' + fe_enums.tagName[inv.tipo_documento] + '>')

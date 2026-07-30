@@ -174,8 +174,19 @@
                                 <field name="xml_comprobante" string="Comprobante XML" filename="fname_xml_comprobante"/>
                                 <field name="fname_xml_respuesta_tributacion" invisible="1" readonly="1"/>
                                 <field name="xml_respuesta_tributacion" string="Respuesta XML de Hacienda" filename="fname_xml_respuesta_tributacion"/>
-                                <field name="state_tributacion" string="Estado de factura electrónica" readonly="1"/>
+                                <field name="state_tributacion" string="Estado de factura electrónica" readonly="1"
+                                       widget="badge" class="o_ticofac_hacienda_status"
+                                       decoration-success="state_tributacion == 'aceptado'"
+                                       decoration-warning="state_tributacion in ('procesando', False)"
+                                       decoration-danger="state_tributacion in ('rechazado', 'error', 'firma_invalida')"
+                                       decoration-info="state_tributacion in ('recibido', 'ne')"
+                                       decoration-muted="state_tributacion == 'na'"/>
                                 <field name="electronic_invoice_return_message" string="Respuesta de Hacienda" readonly="1"/>
+                                <field name="hacienda_rejection_summary"
+                                       string="Qué debe corregir"
+                                       readonly="1"
+                                       invisible="state_tributacion != 'rechazado'"/>
+                                <field name="hacienda_rejection_reason" invisible="1"/>
                             </group>
                         </group>
                     </group>
@@ -197,7 +208,7 @@
             <xpath expr="//list//field[@name='name']" position="after">
                 <field name="tipo_documento" string="Doc Elect." optional="show"/>
                 <field name="state_tributacion" string="Estado FE" optional="show" 
-                    widget="badge"
+                    widget="badge" class="o_ticofac_hacienda_status"
                     decoration-success="state_tributacion == 'aceptado'"
                     decoration-warning="state_tributacion == 'procesando'"
                     decoration-danger="state_tributacion in ('rechazado', 'error')"

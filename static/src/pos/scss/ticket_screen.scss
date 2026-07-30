@@ -1,0 +1,42 @@
+// Hacienda may return long XML fragments and URLs without natural break points.
+.modal-dialog:has(> .ticofac-rejection-dialog) {
+    width: calc(100% - 2rem);
+    max-width: 42rem;
+}
+
+.ticofac-rejection-dialog {
+    .modal-body {
+        max-height: 65vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .modal-body p {
+        margin-bottom: 0;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+}
+
+.o_ticofac_status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .15rem;
+    padding: .3rem .65rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .18), inset 0 1px 0 rgba(255, 255, 255, .18);
+
+    &--success { background: #168a58; border-color: #0f7147; }
+    &--danger  { background: #d9364a; border-color: #b92335; }
+    &--warning { color: #352400; background: #f0ad00; border-color: #c88f00; }
+    &--info    { background: #087f8f; border-color: #066876; }
+    &--muted   { background: #667085; border-color: #50596c; }
+}

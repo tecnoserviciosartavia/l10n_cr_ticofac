@@ -123,7 +123,7 @@
         </xpath>
     </t>
     <t t-name="l10n_cr_ticofac.PaymentScreenPurchaseOrder"
-       t-inherit="point_of_sale.PaymentScreen"
+       t-inherit="point_of_sale.PaymentScreenButtons"
        t-inherit-mode="extension">
         <xpath expr="//div[hasclass('payment-buttons')]" position="inside">
             <button class="button btn btn-light btn-lg w-100 lh-lg text-start"
@@ -133,6 +133,76 @@
                 <span t-if="currentOrder.get_customer_purchase_order()" t-esc="currentOrder.get_customer_purchase_order()"/>
                 <span t-else="">Orden de compra (opcional)</span>
             </button>
+        </xpath>
+    </t>
+    <t t-name="l10n_cr_ticofac.TicketScreenFiscalStatus"
+       t-inherit="point_of_sale.TicketScreen"
+       t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('header-row')]/div[normalize-space()='Receipt Number']" position="replace">
+            <div class="col wide p-2">Factura Hacienda</div>
+            <div class="col wide p-2">Tipo documento</div>
+        </xpath>
+        <xpath expr="//div[hasclass('header-row')]/div[normalize-space()='Status']" position="replace">
+            <div class="col narrow p-2">Estado Hacienda</div>
+        </xpath>
+        <xpath expr="//t[@t-if='!ui.isSmall']//div[hasclass('order-row')]/div[2]" position="replace">
+            <div class="col wide p-2">
+                <div t-esc="ticofacInvoiceNumber(order)"/>
+                <small t-if="order.raw.tipo_documento === 'NC' and order.raw.ticofac_origin_invoice_name">
+                    Factura origen: <t t-esc="order.raw.ticofac_origin_invoice_name"/>
+                </small>
+            </div>
+            <div class="col wide p-2" t-esc="ticofacDocumentType(order)"/>
+        </xpath>
+        <xpath expr="//t[@t-if='!ui.isSmall']//div[hasclass('order-row')]/div[hasclass('narrow')]" position="replace">
+            <div class="col narrow p-2">
+                <span t-att-class="ticofacInvoiceStateClass(order)">
+                    <i class="fa me-1" t-att-class="ticofacInvoiceStateIcon(order)"/>
+                    <t t-esc="ticofacInvoiceState(order)"/>
+                </span>
+                <button t-if="order.raw.ticofac_invoice_state === 'rechazado' and ticofacRejectionReason(order)"
+                        class="btn btn-link btn-sm d-block p-0 mt-1 text-nowrap"
+                        t-on-click.stop="() => this.ticofacShowRejectionReason(order)">
+                    <i class="fa fa-info-circle me-1"/>Ver motivo
+                </button>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('mobileOrderList')]/div[1]/div[1]" position="replace">
+            <div>
+                <t t-esc="ticofacDocumentType(order)"/>: <t t-esc="ticofacInvoiceNumber(order)"/>
+                <small class="d-block" t-if="order.raw.tipo_documento === 'NC' and order.raw.ticofac_origin_invoice_name">
+                    Factura origen: <t t-esc="order.raw.ticofac_origin_invoice_name"/>
+                </small>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('mobileOrderList')]/div[2]/div[hasclass('orderStatus')]" position="replace">
+            <div class="orderStatus text-end">
+                <div>Hacienda: <t t-esc="ticofacInvoiceState(order)"/></div>
+                <button t-if="order.raw.ticofac_invoice_state === 'rechazado' and ticofacRejectionReason(order)"
+                        class="btn btn-link btn-sm p-0"
+                        t-on-click.stop="() => this.ticofacShowRejectionReason(order)">
+                    Ver motivo
+                </button>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('control-buttons')]" position="before">
+            <div t-if="_selectedSyncedOrder.raw.account_move"
+                 class="d-flex align-items-center justify-content-between gap-2 p-2 rounded-3 bg-100">
+                <div>
+                    <div class="fw-bolder">
+                        Factura: <t t-esc="_selectedSyncedOrder.raw.ticofac_invoice_name or '-'"/>
+                    </div>
+                    <span t-att-class="ticofacInvoiceStateClass(_selectedSyncedOrder)">
+                        <i class="fa me-1" t-att-class="ticofacInvoiceStateIcon(_selectedSyncedOrder)"/>
+                        <t t-esc="ticofacInvoiceState(_selectedSyncedOrder)"/>
+                    </span>
+                </div>
+                <button t-if="_selectedSyncedOrder.raw.ticofac_invoice_state === 'aceptado'"
+                        class="btn btn-light btn-lg"
+                        t-on-click="() => this.ticofacResendInvoiceEmail(_selectedSyncedOrder)">
+                    <i class="fa fa-envelope me-1"/> Reenviar correo
+                </button>
+            </div>
         </xpath>
     </t>
 </templates>

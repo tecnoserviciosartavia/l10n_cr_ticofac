@@ -129,6 +129,8 @@
             "l10n_cr_ticofac/static/src/pos/js/discount_code_popup.js",
             "l10n_cr_ticofac/static/src/pos/js/control_buttons.js",
             "l10n_cr_ticofac/static/src/pos/js/payment_screen.js",
+            "l10n_cr_ticofac/static/src/pos/js/ticket_screen.js",
+            "l10n_cr_ticofac/static/src/pos/scss/ticket_screen.scss",
             "l10n_cr_ticofac/static/src/pos/js/credit_note_popup.js",
             "l10n_cr_ticofac/static/src/pos/xml/custom_orderReceipt.xml",
             "l10n_cr_ticofac/static/src/pos/xml/discount_code_popup.xml",
